@@ -1,0 +1,1075 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FLOW LAB｜流體實驗室</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark;--bg:#04070f;--cy:#2de2ff;--or:#ff9a3c;--vi:#9b6bff;--tx:#e6eefc;--mu:#8fa3c4;--gl:rgba(12,20,38,.68);--ln:rgba(120,170,255,.22)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--bg);color:var(--tx);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;overflow:hidden}
+canvas#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.hid{display:none!important}button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+.gl{background:var(--gl);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--ln);border-radius:14px}
+.btn{background:linear-gradient(135deg,rgba(45,226,255,.18),rgba(155,107,255,.28));border:1px solid var(--cy);border-radius:999px;padding:.55em 1.3em}
+.btn:hover{box-shadow:0 0 22px rgba(45,226,255,.45)}
+.sm{padding:.28em .75em;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--ln);font-size:13px}
+.sm.on{background:rgba(45,226,255,.22);border-color:var(--cy)}
+#home{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth}
+.sc{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:0 6vw}
+.sc.top{justify-content:flex-start;padding-top:9vh}
+.tx{max-width:min(40vw,560px)}
+.tx h2,#home h1{margin:.1em 0 .3em;font-weight:800;line-height:1.1;letter-spacing:.02em}
+#home h1{font-size:clamp(44px,7.5vw,104px);letter-spacing:.06em;font-weight:900;background:linear-gradient(100deg,#fff 20%,var(--cy) 55%,var(--vi));-webkit-background-clip:text;background-clip:text;color:transparent}
+.tx h2{font-size:clamp(30px,4.4vw,62px);background:linear-gradient(100deg,#fff,var(--cy));-webkit-background-clip:text;background-clip:text;color:transparent}
+.tx h2.or{background:linear-gradient(100deg,#fff,var(--or));-webkit-background-clip:text;background-clip:text;color:transparent}
+#home .sub{font-size:clamp(15px,1.8vw,22px);color:var(--cy);margin:.3em 0}
+#home .q{color:var(--mu);font-size:clamp(14px,1.4vw,18px);line-height:1.8}
+.rv{opacity:0;transform:translateY(46px);transition:opacity .9s ease,transform .9s ease}.rv.in{opacity:1;transform:none}
+.hint{margin-top:5vh;color:var(--mu);font-size:13px;letter-spacing:.2em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:20px}
+.card{padding:14px 16px;text-align:left;transition:transform .25s,border-color .25s,box-shadow .25s}
+.card:hover{transform:translateY(-8px) perspective(500px) rotateX(6deg);border-color:var(--cy);box-shadow:0 18px 40px rgba(45,226,255,.2)}
+.card b{display:block;font-size:17px;margin:.3em 0}.card .t{font-size:12px;color:var(--vi);border:1px solid var(--vi);border-radius:99px;padding:1px 9px}
+.card p{margin:.4em 0 0;font-size:13px;color:var(--mu);line-height:1.5}
+#home::after{content:'';display:block;height:6vh}
+@media(max-width:900px){.tx{max-width:100%}}
+#lab{position:fixed;inset:0;display:grid;grid-template-columns:316px 1fr 300px;grid-template-rows:auto 1fr auto;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 10px calc(22px + env(safe-area-inset-bottom,0px));pointer-events:none}
+#lab>*{pointer-events:auto}
+#top{grid-column:1/4;display:flex;align-items:center;gap:8px;padding:8px 14px;flex-wrap:wrap}
+#top .lg{font-weight:900;letter-spacing:.12em;background:none;border:0;font-size:18px}#top .sp{flex:1}
+.pn{padding:14px;overflow:auto;min-height:0;font-size:14px;line-height:1.65}
+#left{grid-column:1;grid-row:2}#right{grid-column:3;grid-row:2}
+.pn h3{margin:.3em 0 .4em;font-size:16px}
+.nb{border-left:3px solid var(--cy);padding:2px 10px;margin:9px 0}.nb i{font-style:normal;font-weight:700;color:var(--cy);display:block;font-size:13px}
+.nb.big1{font-size:16.5px;line-height:1.6}.nb.big1 i,.nb.big2 i{font-size:15px}.nb.big2{font-size:16px}.now{margin:10px 0;padding:10px 12px;border-radius:12px;background:linear-gradient(135deg,rgba(45,226,255,.16),rgba(155,107,255,.14));border:1px solid rgba(45,226,255,.45);font-size:16.5px;line-height:1.55;font-weight:600}.now i{display:block;font-style:normal;font-size:13px;color:var(--cy);letter-spacing:.08em;margin-bottom:2px}.now.done{border-color:#7cf0a8;background:rgba(124,240,168,.12)}.now.done i{color:#7cf0a8}#left h3+.nb{margin-top:4px}.nb.w{border-color:var(--vi)}.nb.w i{color:var(--vi)}.nb.o{border-color:var(--or)}.nb.o i{color:var(--or)}.nb.g{border-color:#7cf0a8}.nb.g i{color:#7cf0a8}
+ol{margin:.2em 0;padding-left:1.3em}details{margin:8px 0}summary{cursor:pointer;color:var(--cy);font-weight:700}details.fd{border:1px solid var(--ln);border-radius:10px;padding:6px 10px;background:rgba(255,255,255,.02)}details.fd>summary{font-size:13.5px;list-style:none}details.fd>summary::before{content:"▸ ";display:inline-block;transition:transform .15s}details.fd[open]>summary::before{transform:rotate(90deg)}details.fd>summary::-webkit-details-marker{display:none}details.fd[open]>summary{margin-bottom:6px}details.fd .nb{margin:0}
+.row{margin:9px 0}.row label{display:flex;justify-content:space-between;font-size:13px;color:var(--mu)}
+input[type=range]{width:100%;accent-color:var(--cy)}select{background:rgba(255,255,255,.07);color:var(--tx);border:1px solid var(--ln);border-radius:6px;padding:3px}
+.kv{display:flex;justify-content:space-between;font-size:13px;padding:2px 0}.kv b{color:var(--cy);font-variant-numeric:tabular-nums}
+small,.note{font-size:12px;color:var(--mu);line-height:1.5}
+#bot{grid-column:1/4;grid-row:3;display:flex;align-items:center;gap:10px;padding:8px 14px;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse;font-size:12px}td,th{border-bottom:1px solid var(--ln);padding:3px;text-align:center}
+.bars div{display:flex;align-items:center;gap:6px;font-size:12px}.bars i{display:block;height:8px;background:var(--or);border-radius:4px}
+body.expo .pn{font-size:17px}
+.shc{display:grid;grid-template-columns:1fr 1fr;gap:10px}.shc>div{border:1px solid var(--ln);border-radius:12px;padding:10px 12px;background:rgba(255,255,255,.03)}.shc b{font-size:18px;color:var(--cy)}.shc .dv{font-size:26px;font-weight:800;color:var(--or)}#board{position:fixed;inset:0;z-index:40;background:radial-gradient(ellipse at top,#0c1a33,#03060d 70%);overflow:auto;padding:24px}#board.hid{display:none}.lbw{max-width:1100px;margin:0 auto}.lbh{display:flex;align-items:center;gap:10px;margin-bottom:8px}.lbh h2{margin:0;font-size:clamp(24px,3.4vw,40px)}.lbt table{width:100%;border-collapse:collapse;font-size:clamp(14px,1.6vw,20px)}.lbt th{color:var(--mu);font-weight:600;text-align:left;padding:8px;border-bottom:1px solid var(--ln)}.lbt td{padding:10px 8px;border-bottom:1px solid rgba(120,170,255,.1)}.lbt tr.r1 td{background:rgba(255,211,107,.14)}.lbt tr.r2 td{background:rgba(200,220,255,.09)}.lbt tr.r3 td{background:rgba(255,154,60,.09)}.lbt tr.new td{border-top:2px solid var(--cy);border-bottom:2px solid var(--cy)}.lbt tr.new td:first-child{border-left:2px solid var(--cy)}.lbt tr.new td:last-child{border-right:2px solid var(--cy)}.lbt .rk{font-weight:800;font-size:1.15em}.lbt .dv{font-weight:800;color:var(--or)}.lbadm{margin:0 0 10px;padding:8px 12px;border:1px dashed #ff9a3c;border-radius:10px;font-size:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}@media(max-width:700px){.shc{grid-template-columns:1fr}.lbt td:nth-child(5),.lbt th:nth-child(5),.lbt td:nth-child(6),.lbt th:nth-child(6){display:none}}#pwm,#stm,#goalM{z-index:50}#mMenu,#mTitle,#drawer,#drawerBg{display:none}
+body.m #mMenu{display:flex;flex-direction:column;justify-content:center;gap:4px;width:40px;height:36px;padding:0 9px;background:none;border:1px solid var(--ln);border-radius:9px}body.m #mMenu span{display:block;height:2px;background:var(--tx);border-radius:2px}
+body.m #mTitle{display:block;flex:1;font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.m #lab{display:block;padding:0}body.m #top{position:fixed;left:0;right:0;top:0;z-index:6;border-radius:0;padding:calc(6px + env(safe-area-inset-top,0px)) 10px 6px;flex-wrap:nowrap;gap:8px}
+body.m #top .lg,body.m #tabs,body.m #expo,body.m #staffBtn,body.m #top .sp{display:none!important}body.m #lbBtn{padding:4px 10px}
+body.m #left,body.m #right{display:none}
+body.m #mscroll{position:fixed;left:0;right:0;top:47vh;bottom:0;overflow:auto;-webkit-overflow-scrolling:touch;padding:10px 12px calc(28px + env(safe-area-inset-bottom,0px));background:rgba(4,8,18,.94);border-top:1px solid var(--ln);border-radius:16px 16px 0 0;font-size:15px;line-height:1.6;pointer-events:auto}
+body.m #mscroll h3{font-size:16px;margin:.6em 0 .3em}body.m .mhead{display:flex;justify-content:flex-end;margin-bottom:2px}
+body.m #mscroll .nb.big2{font-size:15px;margin:4px 0}body.m #mscroll .now{font-size:16px;margin:8px 0}
+body.m #build{position:static;transform:none;width:auto;min-width:0;margin:8px 0;padding:8px 10px}body.m #segBtns button{flex:1;min-width:52px}
+body.m #bot{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;padding:6px 8px}body.m #bot .note{display:none}
+body.m details.fd>summary{font-size:15px;padding:4px 0}body.m .row label{font-size:14px}body.m input[type=range]{height:28px}body.m .sm{min-height:34px}
+body.m #toast{bottom:calc(20px + env(safe-area-inset-bottom,0px));max-width:90vw;text-align:center}
+body.m #board{padding:14px}body.m .lbh{flex-wrap:wrap}body.m .md .bx{padding:16px 16px}
+body.m #drawerBg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:29}body.m #drawerBg.on{display:block}
+body.m #drawer{position:fixed;left:0;top:0;bottom:0;width:min(80vw,320px);z-index:30;padding:calc(16px + env(safe-area-inset-top,0px)) 12px 16px;display:flex;flex-direction:column;gap:6px;transform:translateX(-105%);transition:transform .22s;border-radius:0 16px 16px 0;overflow:auto}body.m #drawer.on{transform:none}
+#drawer .dh{font-weight:900;letter-spacing:.12em;font-size:20px;margin:0 4px 10px}#drawer .dh small{display:block;font-size:12px;letter-spacing:0;color:var(--mu);font-weight:400}
+#drawer .dl{display:block;width:100%;text-align:left;padding:12px 14px;border-radius:10px;border:1px solid var(--ln);background:rgba(255,255,255,.04);color:var(--tx);font-size:16px;margin:0}#drawer .dl.on{border-color:var(--cy);background:rgba(45,226,255,.12)}#drawer .dl.lock{opacity:.5}#dLv{display:flex;flex-direction:column;gap:6px}
+.md{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,4,10,.72);z-index:9;padding:16px}.md.on{display:flex}
+.md .bx{max-width:760px;max-height:90vh;overflow:auto;padding:22px 26px;line-height:1.7;font-size:14px}.md h2{margin-top:0}.md h4{margin:.9em 0 .2em;color:var(--cy)}.md ul{margin:.2em 0;padding-left:1.2em}
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);padding:8px 18px;z-index:12;display:none;font-size:14px}
+#err{position:fixed;inset:0;display:none;align-items:center;justify-content:center;text-align:center;z-index:20;background:var(--bg);padding:20px}
+#build{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;z-index:5;padding:10px 14px;width:min(640px,calc(100vw - 700px));min-width:330px}
+#build .bt{display:flex;gap:8px;align-items:center;font-size:13px;margin:4px 0}#build .sp{flex:1}
+#segBtns{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}#segBtns button{display:flex;flex-direction:column;align-items:center;padding:4px 8px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid var(--ln)}#segBtns button:hover{border-color:var(--cy)}#segBtns svg{display:block}
+.tab.lock{opacity:.45}
+#end{position:fixed;inset:0;overflow:auto;z-index:4;display:flex;justify-content:flex-start;align-items:center;padding:6vh 6vw;pointer-events:none}#end .ebox{max-width:min(620px,92vw);pointer-events:auto;background:rgba(4,8,18,.55);border-radius:16px;padding:18px 22px;backdrop-filter:blur(6px)}
+#end h2{font-size:clamp(32px,4.4vw,58px);margin:.1em 0 .3em;background:linear-gradient(100deg,#fff,var(--cy));-webkit-background-clip:text;background-clip:text;color:transparent}#end .sub{color:var(--cy)}#end p{line-height:1.85;font-size:clamp(14px,1.2vw,17px)}
+.pbar{height:8px;border-radius:4px;background:rgba(255,255,255,.1);margin:6px 0;overflow:hidden}.pbar i{display:block;height:100%;background:linear-gradient(90deg,#8f8,#ffd36b);transition:width .4s}.gauge{margin:6px 0 4px;font-size:12px}.gauge div{display:flex;align-items:center;gap:6px;margin:3px 0}.gauge span{min-width:30px;color:var(--mu)}.gauge b{display:block;height:12px;background:#7fdc6a;border-radius:3px 0 0 3px}.gauge div:first-child b{border-radius:3px}.gauge em{display:block;height:12px;background:#ff9a3c;border-radius:0 3px 3px 0;box-shadow:0 0 8px #ff9a3c}#cap5{position:fixed;left:50%;top:76px;transform:translateX(-50%);max-width:min(620px,60vw);background:rgba(6,12,24,.78);border:1px solid var(--ln);border-radius:12px;padding:10px 16px;font-size:16px;line-height:1.55;z-index:5;pointer-events:none;text-align:center}#cap5.hid{display:none}.big{font-size:16px;margin:4px 0 8px;padding:8px 10px;border:1px solid var(--or);border-radius:10px;text-align:center;line-height:1.5}.big b{color:var(--or);font-size:22px}.big small{font-size:12px;color:var(--mu)}
+.qz{margin:8px 0;padding:8px 10px;border:1px solid var(--vi);border-radius:10px}.qz b{display:block;margin-bottom:4px}.qz button{margin:4px 4px 0 0;display:block;text-align:left;width:100%}.qz b{font-size:16px}
+@media(max-width:900px){#build{width:calc(100vw - 20px);min-width:0;bottom:112px;padding:6px 10px}#segBtns{margin:3px 0}#segBtns svg{display:none}#segBtns button{padding:4px 10px}#build .bt{margin:2px 0}}
+@media(max-width:900px){#lab{grid-template-columns:1fr;grid-template-rows:auto 1fr auto auto auto}#left,#right{grid-column:1;max-height:26vh}#left{grid-row:3}#right{grid-row:4}#bot{grid-row:5;grid-column:1}#top{grid-column:1}body.expo #lab{grid-template-columns:1fr}}
+</style></head><body>
+<canvas id="c"></canvas>
+<div id="err"><div><h2>無法啟動 3D 場景</h2><p>你的瀏覽器或裝置未啟用 WebGL。請更新瀏覽器、開啟硬體加速，或改用其他電腦。</p></div></div>
+
+<section id="home">
+ <div class="sc top"><div class="tx" style="max-width:min(60vw,760px)">
+  <div class="sub rv">看見流動，探索物理。</div>
+  <h1 class="rv">FLOW LAB</h1>
+  <div class="sub rv" style="font-size:clamp(17px,2.2vw,28px);color:var(--tx)">流體實驗室｜無門之門：特斯拉閥的水迷宮</div>
+  <p class="rv"><button class="btn" id="go" style="font-size:18px">開始探索</button></p>
+  <p class="q rv">沒有活動零件，為什麼流體仍然有不同的流動阻力？</p><div class="hint rv">向下捲動 ↓</div></div></div>
+ <div class="sc"><div class="tx"><h2 class="rv" style="color:#6fb4ff">正向：沿著主通道流過。</h2><p class="q rv">這是我們 3D 列印的特斯拉閥：兩側的迴圈左右鏡像、前後錯開，沒有任何活動零件。藍色是正向，水從右端流入，大多沿著主通道直接流過、不太進入迴圈，推起來比較順。</p></div></div>
+ <div class="sc"><div class="tx"><h2 class="rv" style="color:#ff6b6b">反向：換個方向流。</h2><p class="q rv">紅色是反向，水從左端流入，在每個轉彎處被導進迴圈、繞一圈再撞回主流，推起來比較不順。</p><p class="q rv" style="font-size:12px">※ 畫面中的粒子為依這個模型截面計算的二維模擬（Re＝100），只用來呈現水流路徑；關卡中的特斯拉閥依參考圖重新繪製。</p></div></div>
+ <div class="sc" style="justify-content:flex-end;padding-bottom:16vh"><div class="tx rv" style="max-width:none"><h2 style="max-width:14em">親自動手，驗證它。</h2><div class="cards" id="cards"></div><p style="margin-top:14px"><button class="btn sm" id="lbHome">🏆 看設計排行榜</button></p></div></div>
+ </section>
+
+<section id="lab" class="hid">
+ <header id="top" class="gl">
+  <button class="lg" id="logo" title="回首頁">FLOW LAB</button>
+  <span id="tabs" style="display:flex;gap:4px;flex-wrap:wrap"></span><span class="sp"></span>
+  <button class="sm" id="lbBtn">🏆 排行榜</button><button class="sm" id="expo">展示模式</button><button class="sm" id="staffBtn">工作人員模式</button><button class="sm hid" id="fs">全螢幕</button>
+ </header>
+ <aside id="left" class="gl pn">
+  <h3 id="sT"></h3>
+  <div class="nb g big1"><i>目標</i><span id="sG"></span></div>
+  <div class="nb w big2"><i>進度</i><span id="sPr"></span></div>
+  <div class="now"><i>▶ 現在要做</i><span id="sNow"></span></div>
+  <h3>實驗參數</h3>
+  <div class="row" data-lv="2,3" id="rDir"><label>流動方向</label><div style="display:flex;gap:6px"><button class="sm on" id="dF" style="border-color:#5aa8ff">← 正向（藍）</button><button class="sm" id="dR" style="border-color:#ff5a5a">反向 →（紅）</button></div></div>
+  <div class="row" data-lv="1,2,3"><label>雷諾數 Re <b id="vRe"></b></label><input type="range" id="re" min="5" max="100" step="5" value="30"><div id="rPre" data-lv="2" style="display:flex;gap:6px;margin-top:4px"><button class="sm" data-re="10">Re=10</button><button class="sm" data-re="150">Re=150</button></div></div>
+  <div class="row" data-lv="2"><label>流道樣式</label><select id="sty"><option value="stl">特斯拉閥（參考圖）</option><option value="classic">經典單側迴圈</option><option value="dual">雙側交錯</option></select><small id="styN"></small></div>
+  <div class="row" data-lv="2"><label>顯示內容</label><select id="vw"><option value="vort">渦度 ω（紅藍＝旋轉方向）</option><option value="dye">染料</option><option value="speed">流速大小</option><option value="press">壓力</option></select></div>
+  <details class="fd" id="advD"><summary>更多設定</summary>
+  <div class="row" data-lv="2"><label>分流角 θ <b id="vA"></b></label><input type="range" id="al" min="20" max="60" step="5" value="40"></div>
+  <div class="row" data-lv="2"><label>主通道寬 w（格） <b id="vW"></b></label><input type="range" id="wm" min="6" max="12" step="2" value="8"></div>
+  <div class="row" data-lv="2"><label>迴圈寬 g（格） <b id="vG"></b></label><input type="range" id="gg" min="5" max="10" step="1" value="7"></div>
+  <div class="row" data-lv="2"><label>節數 n <b id="vN"></b></label><input type="range" id="nn" min="2" max="8" step="1" value="4"></div>
+  <div class="row" data-lv="2"><label>島長 ℓ（格） <b id="vL"></b></label><input type="range" id="ln" min="16" max="36" step="2" value="26"></div>
+  <div class="row" data-lv="2"><label>染料擴散係數 <b id="vD"></b></label><input type="range" id="df" min="0" max="0.04" step="0.005" value="0.01"></div>
+  <div class="row" data-lv="2"><label>壓克力蓋透明度</label><input type="range" id="lid" min="0" max="0.5" step="0.05" value="0.12"></div>
+  <div class="row" data-lv="1,2,3,4"><label>模擬速度（粒子播放） <b id="vS"></b></label><input type="range" id="stp" min="1" max="20" step="1" value="8"></div>
+  <div class="row" data-lv="2" style="display:flex;gap:6px;flex-wrap:wrap"><button class="sm" id="lowp">低效能模式</button><button class="sm" id="rm">減少動態</button><button class="sm" id="rst">重設參數</button></div>
+  </details>
+  <div class="row" data-lv="4"><div class="note">測試條件固定：Re = <b id="vRe4"></b>，主通道寬 8 格、迴圈寬 7 格。每個組合都用同樣的流量與 Re 分別算正向（藍，右→左）與反向（紅，左→右）。</div></div>
+  <details class="fd"><summary>操作步驟</summary><div class="nb"><ol id="sS"></ol></div></details>
+  <details class="fd"><summary>即時觀察（來自模擬）</summary><div class="nb o"><span id="sH">模擬啟動中…</span></div></details>
+  <details class="fd"><summary>原理與公式</summary><div id="sP" class="note" style="font-size:13px"></div></details>
+ </aside>
+ <aside id="right" class="gl pn">
+  <h3>成果（模擬輸出）</h3>
+  <div id="dat"></div>
+  <div class="row" data-lv="3" id="mixBars"></div>
+  <div class="row hid" data-lv="4" id="shareRow"><button class="btn sm" id="shareBtn" style="width:100%">🏆 分享我的設計結果</button></div>
+  <details class="fd" id="datD"><summary>更多數據</summary><div id="dat2"></div></details>
+  <details class="fd" id="recD"><summary>紀錄表</summary><table><thead id="th"></thead><tbody id="tb"></tbody></table><div class="bars" id="bars"></div></details>
+  <details class="fd" id="whyD"><summary id="whyS">為什麼？</summary><div id="why"></div></details>
+  <details class="fd"><summary>模型說明</summary><div class="note" style="margin-top:4px" id="model"></div></details>
+ </aside>
+ <footer id="bot" class="gl">
+  <button class="sm" id="pp">⏸ 暫停</button><button class="sm" id="rp">↻ 重啟流場</button>
+  <button class="sm" id="vTop">俯視</button><button class="sm" id="vTilt">斜視</button>
+  <span class="note">拖曳旋轉・滾輪縮放・Shift＋拖曳平移・方向鍵・空白鍵暫停</span>
+ </footer>
+</section>
+<div id="build" class="gl hid"><div class="bt"><b>加入單節模組</b><span id="segN">0／12 節</span></div>
+ <div id="segBtns"></div>
+ <div class="bt"><button class="sm" id="segUndo">移除最後一節</button><button class="sm" id="segClr">清空</button><span class="sp"></span><button class="btn" id="segTest">▶ 測試</button></div></div>
+<div id="toast" class="gl"></div>
+<div class="md" id="qm" data-lock><div class="bx gl" style="max-width:640px"><h2>🧠 渦流知識確認</h2><p class="note">你已經記錄了 3 種不同的渦流狀態！請回答下面 2 題，兩題都答對才能前往第三關（答錯會看到說明，可以再選一次）。</p><div id="quiz"></div></div></div>
+<div class="md" id="shm" data-lock><div class="bx gl" style="max-width:620px">
+ <h2>🏆 要分享你的第四關設計嗎？</h2>
+ <p class="note" style="margin-top:-6px">下面是你測試的兩個不同組合（二維模擬、Re 150、同樣的流量）。分享後會出現在「設計排行榜」上，依兩個組合中較大的 D 排名。</p>
+ <div id="shCards" class="shc"></div>
+ <div id="shStep1" style="display:flex;gap:10px;justify-content:center;margin-top:14px"><button class="btn" id="shYes">分享結果</button><button class="btn sm" id="shNo">不分享</button></div>
+ <div id="shStep2" class="hid" style="margin-top:14px;text-align:center"><label style="display:block;margin-bottom:6px">請輸入暱稱（最多 12 個字，會顯示在排行榜上）</label>
+  <input id="shNick" maxlength="12" autocomplete="off" style="font-size:18px;padding:8px 12px;border-radius:10px;border:1px solid var(--ln);background:rgba(255,255,255,.06);color:var(--tx);width:min(320px,80%);text-align:center">
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:12px"><button class="btn" id="shSend">送出</button><button class="btn sm" id="shBack">返回</button></div>
+  <p class="note" id="shErr" style="color:#ff9a3c;min-height:1.4em;margin:8px 0 0"></p></div>
+ <div id="shStep3" class="hid" style="margin-top:14px;text-align:center"><p id="shDone" style="font-size:17px"></p><div style="display:flex;gap:10px;justify-content:center"><button class="btn" id="shGo">繼續</button><button class="btn sm" id="shLb">看排行榜</button></div></div>
+</div></div>
+<section id="board" class="hid"><div class="lbw">
+ <div class="lbh"><div><div class="sub">FLOW LAB・第四關</div><h2>🏆 特斯拉閥設計排行榜</h2></div><span class="sp"></span><span id="lbSrc" class="note"></span><button class="sm" id="lbFs">⛶ 全螢幕</button><button class="sm" id="lbAdmin">管理（需密碼）</button><button class="sm" id="lbClose">✕ 關閉</button></div>
+ <p class="note" style="margin:0 0 10px">依兩個組合中較大的 D 排序（D ＝ 反向壓力差 ÷ 正向壓力差，越大代表單向效果越明顯；二維模擬、Re 150、同流量）。D 相同時，先分享的排前面。</p>
+ <div id="lbAdm" class="hid lbadm"><b>管理模式</b>：可刪除不適當的暱稱。<button class="sm" id="lbClear">清空全部紀錄</button><span id="lbClearC" class="note"></span></div>
+ <div class="lbt"><table><thead><tr><th>名次</th><th>暱稱</th><th>最佳組合</th><th>D</th><th>另一個組合</th><th>時間</th><th class="adm hid"></th></tr></thead><tbody id="lbBody"></tbody></table><p id="lbEmpty" class="note" style="text-align:center;padding:30px 0">還沒有人分享，快來當第一名！</p></div>
+</div></section>
+<div class="md" id="pwm" data-lock><div class="bx gl" style="max-width:420px;text-align:center"><h2 id="pwT" style="font-size:18px">請輸入工作人員密碼</h2>
+ <input id="pwI" type="password" autocomplete="off" style="font-size:18px;padding:8px 12px;border-radius:10px;border:1px solid var(--ln);background:rgba(255,255,255,.06);color:var(--tx);width:80%;text-align:center">
+ <p id="pwE" style="color:#ff9a3c;min-height:1.4em;margin:8px 0"></p><p><button class="btn" id="pwGo">確定</button> <button class="btn sm" id="pwNo">取消</button></p></div></div>
+<div class="md" id="stm"><div class="bx gl" style="max-width:640px"><h2>🛠 工作人員模式</h2>
+ <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="sm" id="stUnlock">解鎖全部關卡</button><button class="sm" id="stLb">排行榜管理</button><button class="sm" id="stProp">企劃書</button><button class="sm" id="stFs">全螢幕</button><button class="sm" id="stReset">重新開始（給下一位觀眾）</button><button class="sm" id="stOff">離開工作人員模式</button></div>
+ <h4>排行榜連線</h4><p class="note" id="stSrc"></p>
+ <p class="note">由 Apps Script 網址開啟時會自動連線；直接開 HTML 檔的電腦，請貼上 Apps Script 網頁應用程式網址（…/exec）：</p>
+ <div style="display:flex;gap:6px"><input id="stApi" placeholder="https://script.google.com/macros/s/…/exec" style="flex:1;padding:6px 8px;border-radius:8px;border:1px solid var(--ln);background:rgba(255,255,255,.06);color:var(--tx)"><button class="sm" id="stApiSave">儲存</button></div>
+ <h4>手機版 QR code（給觀眾掃描）</h4>
+ <div style="display:flex;gap:6px"><input id="stMurl" placeholder="手機版網址（…/exec?m=1）" style="flex:1;padding:6px 8px;border-radius:8px;border:1px solid var(--ln);background:rgba(255,255,255,.06);color:var(--tx)"><button class="sm" id="stMsave">更新 QR</button></div>
+ <div style="display:flex;gap:14px;align-items:center;margin-top:10px;flex-wrap:wrap"><div id="stQR" style="background:#fff;border-radius:10px;line-height:0;min-width:120px;min-height:120px;display:flex;align-items:center;justify-content:center;color:#333"></div><div class="note" id="stQRu" style="word-break:break-all;max-width:360px"></div></div>
+ <p style="margin-top:14px"><button class="btn" data-close>關閉</button></p></div></div>
+<div id="drawerBg"></div><nav id="drawer" class="gl"><div class="dh">FLOW LAB<small>流體實驗室</small></div>
+ <button class="dl" id="dHome">🏠 首頁</button><div id="dLv"></div><button class="dl" id="dGoal">📌 本關目標</button><button class="dl" id="dLb">🏆 設計排行榜</button></nav>
+<div class="md" id="goalM"><div class="bx gl" style="max-width:520px"><div class="note" style="color:var(--cy)">本關目標</div><h2 id="gmT" style="margin:.2em 0 .4em"></h2><p id="gmG" style="font-size:17px;line-height:1.7"></p>
+ <div class="now" style="margin:12px 0"><i>▶ 第一步</i><span id="gmN"></span></div><p style="text-align:center;margin:12px 0 0"><button class="btn" id="gmGo" style="font-size:17px;padding:10px 28px">開始 ▶</button></p></div></div>
+<div class="md" id="next"><div class="bx gl" style="text-align:center"><h2 id="nxT"></h2><p id="nxB"></p><p><button class="btn" id="nxGo"></button> <button class="btn sm" id="nxStay">留下繼續</button></p></div></div>
+<section id="end" class="hid"><div class="ebox"><div class="sub">結論</div><h2>無門之門</h2>
+ <p>反向流動時，水流被引導進側邊迴圈，繞過半圈後斜著衝回主流（本站模型的交會角約 124°）。兩股水的動量在交會處部分抵銷，機械能再經由黏滯作用耗散成內能，這是反向需要較大壓力差的主要原因；至於耗散有多大，還取決於雷諾數與整體幾何。偵測到的渦心數不一定比較多——本模型中反而是正向較多，所以判斷阻力要看能量耗散，不能只看渦流的數量。</p>
+ <p>特斯拉閥證明了一件看似違反直覺的事情：即使沒有任何活動零件，只要改變流道的幾何形狀，就能改變流體的行為。</p>
+ <p>在本活動中，參與者從設計不同角度的特斯拉閥開始，透過實際推動色水、觀察分流與渦流，再比較不同設計造成的阻力差異，體驗了工程師「提出假設、設計模型、測試驗證、分析結果」的完整探究流程。</p>
+ <p>從流體力學的角度來看，連續方程式、伯努力原理、雷諾數以及 Navier–Stokes 方程中的非線性對流項，共同解釋了流道幾何如何影響速度場、回流、渦流與能量耗散，最終形成正反向不同的流動阻力。</p>
+ <p>更重要的是，這項原理並不只存在於實驗桌上。現代的微流體醫療晶片（Lab-on-a-Chip）、無閥式微型幫浦與微流體混合器等技術，都運用了「利用幾何控制流體」的設計思想，讓工程師能在沒有活動零件的情況下完成流體控制。</p>
+ <p id="endSum" class="note"></p>
+ <p><button class="btn" id="endPlay">▶ 再播一次動畫</button> <button class="btn sm" id="endBack">回到關卡</button> <button class="btn sm" id="endHome">回首頁</button></p></div></section>
+
+<div class="md" id="prop"><div class="bx gl"><h2>《無門之門：特斯拉閥的水迷宮》學生企劃書摘要</h2>
+ <p>不用彈簧、球閥或電子控制，只靠管道形狀改變水流方向偏好。參與者用 3D 列印模組化流道，以針筒推動色水，比較正向與反向差異。</p>
+ <h4>四個關卡（本站對應四個站）</h4><ul><li><b>I 水流大對決</b>：兩個相同特斯拉閥一正一反，比較壓力差、流動阻力與 Diodicity。</li><li><b>II 渦流現形記</b>：慢推走主流道，快推出現旋渦與回流（Reynolds number、流動分離、能量耗散）。</li><li><b>III 驗血晶片的混色魔術</b>：藍黃色水對照直管與 Tesla 微混合器，認識被動式混合與 Lab-on-a-Chip。</li><li><b>IV 設計你的特斯拉閥</b>：替換 20°–60° 角度模組，先猜再驗證。企劃書的 45°–55° 是待檢驗的假說。</li></ul>
+ <h4>時程</h4><ul><li>10/11 3D 模組設計完成　10/17 列印完成　10/24 前備料、加工與測試</li><li>10/31 替換不可行的計畫　之後測試與練習　11/14 科學節</li></ul>
+ <p class="note">工作人員：<button class="sm" id="unlockAll">解鎖全部關卡</button>（展示或測試用）</p>
+ <p><button class="btn" data-close>關閉</button></p></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+const STL_MASK='AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHwAAAP4AAAD8AwAA+A8AAAAAAAAAAAAAAAAAAAAAAAAAEAAAAPgBAADwBwAA4B8AAMD/AACA/wMAAP8PAAD+PwAAAAAAAAAAAAAAAAAAAAAAAAD/AQAA/gcAAPwfAAD4fwAA8P8BAMD/BwCA/x8AAP9/AAAAAAAAAAAAAAAAAAAAAAAAwP8DAAD/DwAA/j8AAPz/AAD4/wMA4P8PAMD/PwCA/38AAAAAAAAAAAAAAAAAAAAAAADg/w8AgP8fAAD/fwAA/v8BAPz/BwD4/x8A4P8/AMD//wAAAAAAAAAAAAAAAAAAAAAAAPD/DwDg/z8AgP//AAD//wMA/v8HAPz/HwDw/38A4P//AAAAAAAAAAAAAAAAAAAAAAAA+P8fAPD/fwDA//8AgP//AwD//w8A/vEfAPiDfwDwB/4BAAAAAAAAAAAAAAAAAAAAAAD8/x8A+O9/AOAP/wHAH/wDgD/wDwB/wD8A/AF/APgD/AEAAAAAAAAAAAAAAAAAAAAAAP7APwD8g38A8Af+AeAP+AfAH+APgD+APwD+AH4A/AH8AQAAAAAAAAAAAAAAAAAAAAAAf4A/AP4A/wD4A/wB8AfwB+APwA/AH4A/AH8A/gD+APgBAAAAAAAAAAAAAAAAAAAAAIA/gD8AfwD+APwB+AH4A/AH8AfAD+APAD+APwB+AH8A+AEAAAAAAAAAAAAAAAAAAAAAwB8AP4A/AP4A/gD4AfwB8Af4A8AP8AcAP8AfAH6APwD4AQAAAAAAAAAAAAAAAAAAAADgDwA/wB8AfgB/APgB/gDwB/wBwA/4A4Af4A8AfsAfAPwAAAAAAAAAAAAAAAAAAAAAAPAHAD/gDwB+gD8A+AF/APAD/gDAD/wBgB/wBwA/4A8A/AAAAAAAAAAAAAAAAAAAAAAA+AOAH/AHAH7AHwD8gD8A8AN/AOAH/gDAH/gDgD/wDwB+AAAAAAAAAAAAAAAAAAAAAAD4AYAf+AMAP+APAP7AHwD4gX8A8Af/AeAP/AfAH/gfAH8AAAAAAAAAAAAAAAAAAAAAAPgAwA/8A4A/8A8Af+A/APzA/wD4g/8D8Af+D+AP/D+APwAAAAAAAAAAAAAAAAAAAAAA+AHgD/4HwB/4H4A/8H8A/uD/AfzB/wf4A/8f8Af+f8AfAAAAAAAAAAAAAAAAAAAAAAD4A/AH/w/gD/w/wB/4/wB/8P8D/uDvD/yBvz/4A3/+4A88AAAAAAAAAAAAAAAAAAAAAPwH+IO/H/AH/n/gD/z9gT/48wd/8Mcf/sAff/yBP/zxBz4AAAAAAAAAAAAAAP///////w/8wZ8/+AN//vAH/vjDH/zhjz/4gz9/4A/+/sAf+PsD////////////////////////H/7gD3/8gT/8+QN/8OcP/sDfH/wD/z/wD/x/4D/w/4H//////////////////////78/f/AP/v7AH/j/gX/g/wf/gf8P/gf+H/gf+D/wf+D/wP//////////////////////P/8/+B/8f+A/8P/A/8D/g/8D/wf/D/wP/j/wH/j/wH/g//////////////////////8//h/8P/g/8H/gf+D/gf/B/wf+g/8f+Af/f+AP/P2BP/D//////////////////////z/8D/5/8B/4/8A/8P8D/+DvD/zBnz/wh3/+wB/++AN/+P//////////////////////P/gHf//gD/z9gT/48wf+8Mcf+OMPf+DPP/yBP3/wB/78/f////////////////////8/8Ic//sEf/vgDf/zhD/z5gz/w9wf+wP8f+AP/P+AP/P/8/////////////////////z/gzx/8gz9/8Af+/sAf+P8Bf+D/A/yB/w/wB/4fwB/4f/z//////////////wAAAAAAAMDfD/gH/z/gD/x/gD/w/wD+wP8B+AP/B+AP/A+AP/A/PAAAAAAAAAAAAAAAAAAAAAAAgP8H4A/+H8Af+D8Af+B/APyB/wDwB/4DwB/4BwB/4B88AAAAAAAAAAAAAAAAAAAAAAAA/wPAD/wPgD/wHwD+wD8A+AN/AOAP/AGAH/AHAH7AHzwAAAAAAAAAAAAAAAAAAAAAAAD+AYAf+AcAf+APAPyBPwDwA/4AwA/4AwA/4A8AfoA/PAAAAAAAAAAAAAAAAAAAAAAAAPwBgD/wBwB+wB8A+AF/AOAH/AHAD/AHAD/AHwD8AH88AAAAAAAAAAAAAAAAAAAAAAAA+AMAP+APAPyAPwD4Af4A4Af4A4Af4A8AP4A/APwA/jwAAAAAAAAAAAAAAAAAAAAAAADwBwA/wB8A/AB/APgD/AHgB/AHgB/AHwA/AH8A/AD8PQAAAAAAAAAAAAAAAAAAAAAAAOAPAH+APwD8AP4A+AP4A+AH4A/AH4A/AD8A/gD+APg/AAAAAAAAAAAAAAAAAAAAAAAAwB8AfwB/APwA/AH4A/AH4AfAH8AfAH+APwD8Af4A8D8AAAAAAAAAAAAAAAAAAAAAAACAPwB/AP4A/gD4A/gD4A/wB4A/4B8A/sA/APgD/wDgPwAAAAAAAAAAAAAAAAAAAAAAAAB/gD8A/AH/APAH/AHAH/gHAH/wDwD84z8A8P9/AMA/AAAAAAAAAAAAAAAAAAAAAAAAAP7BPwD4h/8A4B//AYD//wcA/v8PAPj/HwDg/38AgD8AAAAAAAAAAAAAAAAAAAAAAAAA/P8/APD/fwDA//8BAP//AwD8/wcA8P8fAMD/PwAAPwAAAAAAAAAAAAAAAAAAAAAAAAD4/x8A4P9/AID//wAA/v8BAPj/BwDg/w8AgP8fAAA+AAAAAAAAAAAAAAAAAAAAAAAAAPD/HwDA/z8AAP9/AAD8/wEA8P8DAMD/BwAA/w8AADwAAAAAAAAAAAAAAAAAAAAAAAAAwP8PAID/HwAA/j8AAPh/AADg/wEAgP8DAAD+BwAAAAAAAAAAAAAAAAAAAAAAAAAAAACA/wcAAP4PAAD4HwAA4D8AAIB/AAAA/gAAAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/AQAA/AMAAOAHAAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',STL_CY=33;
+// 封面模型流道遮罩（由 tools/cover_mask.py 產生）
+const COVER_MASK='AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAHwAAAAAAAID/BwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHAAAAAAAAgP8DAAAAAAAA/n8AAAAAAAD8/wcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/wEAAAAAAAD+PwAAAAAAAPj/AwAAAAAA8P9/AAAAAADA//8HAAAAAAAAAAAAAAAAAAAAAAAAAAA8AAAAAAAAAP4fAAAAAAAA+P8DAAAAAADg/z8AAAAAAMD//wcAAAAAAP7/fwAAAAAA+P//BwAAAAAAAAAAAAAA/A8AAAAAAAD4/wEAAAAAAOD/HwAAAAAAgP//AwAAAAAA/v8/AAAAAAD4//8DAAAAAOD//z8AAAAAAP///wMAAAAAAAAAAAAA4P8PAAAAAACA//8BAAAAAAD+/x8AAAAAAPj//wEAAAAA4P//HwAAAAAA////AQAAAAD8//8fAAAAAOD///8BAAAAAAAAAAAAAP7/HwAAAAAA+P//AQAAAADA//8fAAAAAAD///8BAAAAAPz//x8AAAAA8P///wAAAACA////DwAAAAD8////AAAAAAAAAAAAAMD//w8AAAAAAP///wAAAAAA/P//DwAAAADg////AAAAAID///8PAAAAAPz//38AAAAA8P///wcAAACA////PwAAAAAAAAAAAAD8//8HAAAAAOD//38AAAAAgP///wcAAAAA/P//fwAAAADw////AwAAAID///8/AAAAAP7///8DAAAA+P///x8AAAAAAAAAAACA////BwAAAAD8//8/AAAAAPD///8DAAAAgP///z8AAAAA/v///wEAAAD4////HwAAAMD/////AAAAAP////8PAAAAAAAAAAAA8P///wEAAACA////HwAAAAD+////AQAAAPj///8PAAAAwP////8AAAAA/////wcAAAD4////fwAAAOD/////AwAAAAAAAAAAAP7///8AAAAA8P///w8AAADA////fwAAAAD/////BwAAAPj///8/AAAA4P////8DAAAA/////x8AAAD8/////wEAAAAAAAAAAMD///9/AAAAAP////8HAAAA+P///z8AAADg/////wEAAAD/////HwAAAPz/////AAAA4P////8PAACA/3/g/38AAAAAAAAAAAD4////PwAAAOD/////AQAAAP////8fAAAA/P////8AAADg/////wcAAID///j/fwAAAPz/Af//AwAA8P8H4P8fAAAAAAAAAAAA/////w8AAAD8/////wAAAOD/////BwAAgP////8/AAAA/P+B//8DAADw/wfw/x8AAID/HwD//wAAAP5/APD/DwAAAAAAAAAA4P////8HAACA/////z8AAAD8/8P//wEAAPD/B/j/HwAAgP8fAP//AAAA/v8A8P8HAADw/wOA/38AAMD/DwD4/wMAAAAAAAAAAPz/////AQAA8P8P/P8PAACA/x+A//8AAAD+/wD4/wcAAPD/A4D/PwAAwP8PAPj/AwAA/n8AwP8fAAD4/wEA/P8AAAAAAAAAAID/P8D/fwAAAP7/APz/BwAA8P8DwP8/AADA/w8A/P8BAAD+fwDA/w8AAPj/AQD+/wAAwP8PAOD/BwAA/z8AAP8/AAAAAAAAAADw/wPA/z8AAMD/DwD8/wEAAP5/AOD/DwAA+P8BAP5/AADA/w8A4P8HAAD/PwAA/z8AAPj/AQD4/wEA4P8HAID/DwAAAAAAAAAA/n8A4P8PAAD4/wEA/n8AAMD/DwDw/wMAAP8/AAD/HwAA+P8BAPj/AQDg/wcAgP8PAAD/PwAA/H8AAPz/AADg/wMAAAAAAAAAwP8PAPD/AwAA/z8AgP8fAAD4/wEA+P8AAOD/BwDA/w8AAP8/AAD8fwAA/P8AAOD/AwDg/wcAAP8fAID/HwAA+P8AAAAAAAAAAPj/AQD8/wAA4P8HAMD/BwAA/z8AAP4/AAD8/wAA4P8DAOD/BwAA/x8AgP8fAAD4/wAA/P8AAMD/BwDw/wMAAP4/AAAAAAAAAAD/PwAA/j8AAPz/AADw/wEA4P8HAAD/DwCA/x8AAPj/AAD8/wAAwP8HAPD/AwAA/j8AgP8fAADw/wEA/n8AAID/DwAAAAAAAADg/wcAgP8PAID/HwAA/H8AAPz/AADA/wMA8P8DAAD+HwCA/x8AAPD/AAD+fwAAgP8HAPD/AwAA/H8AwP8PAADg/wMAAAAAAAAA/P8AAOD/AwDw/wMAAP4fAID/HwAA8P8AAP5/AACA/wcA8P8DAAD8PwDA/w8AAOD/AQD+fwAAAP8PAPj/AQAA+H8AAAAAAAAAgP8fAAD4/wAA/n8AAID/BwDw/wMAAPw/AMD/DwAA4P8BAP5/AAAA/w8A+P8BAAD4fwDA/w8AAMD/AwD/PwAAAP4fAAAAAAAAAPD/AwAA/D8AwP8PAADg/wEA/n8AAAD/DwD4/wEAAPh/AMD/DwAAwP8DAP8/AAAA/h8A+P8BAAD4/wDg/wcAAMD/AwAAeAAAAAD+fwAAgP8PAPj/AQAA/H8AwP8PAADA/wMA/z8AAAD/HwD4/wEAAPh/AOD/BwAAwP8DAP8/AAAA/h8A/P8AAADw/wDA/wcAAADA/w8AAOD/AwD/PwAAAP8PAPj/AQAA+H8A4P8HAADA/wMA/z8AAAD+HwD8/wAAAPD/AOD/BwAAwP8HgP8fAAAA/j8A+P8BAAAA+P8BAAD4fwDg/wcAAMD/AwD/PwAAAP4fAPz/AAAA8P8A4P8HAADA/weA/x8AAAD+HwD8/wAAAPj/APD/BwAAwP8HAP//AAAAAP8/AAAA/h8A/P8AAAD4/wDg/wcAAMD/A4D/HwAAAP4fAPz/AAAA+P8A8P8DAADA/weA/z8AAAD/PwD+/wMAAPj/AOD/fwAA+P//BwAAwP8DgP8fAAAA/x8A/P8AAAD4/wDw/wMAAMD/B4D/PwAAAP8/AP7/AQAA+P8A8P8fAADg/wfA//8BAAD/HwD8/z8AAP7//wAAAPj/APD/AwAAwP8HgP8fAAAA/x8A/v8BAAD4/wDw/x8AAOD/B8D//wAAAP8fAP7/DwAA/P8A+P//AADg/weA//8fAID//x8AAAD/HwD+fwAAAPj/APD/DwAA4P8HwP//AAAA/x8A/v8PAAD8/wD4/38AAOD/B8D//wcAgP8fAP//fwAA/P8A8P//DwDg//8HAADg/wfA/38AAAD/HwD+/wcAAPz/APj/fwAA4P8HwP//BwCA/x8A//8/AAD8/wD4//8DAPD/A+D//z8AgP8fAP7//wcA+P//AwAA/P8A+P8/AADg/wPA//8DAID/HwD//z8AAPz/APj//wMA8P8D4P//HwCA/w8A////AQD+fwD8//8fAPD/A8D////jB/7//wEAgP8fAP//HwAA/P8A+P//AQDw/wPg//8fAID/DwD///8BAP5/APz//w8A8P8D4P///wDA/w+A/9//DwD+fwD4////+YH///8AAPD/A+D//w8AgP8fAP///wAA/n8A/P//DwDw/wPg////AMD/D4D///8HAP5/APz//n8A+P8B8P/j/wfA/w8A/z/8/37g//9/AAD+fwD8//8HAPD/A+D//38AwP8PgP///wcA/n8A/P//fwD4/wHw//P/A8D/D4D/H/8/AP8/AP5/8P8D+P8B4P8H/v8f+P//PwDA/w+A////AwD+fwD8//8/APj/AfD/8/8DwP8PgP+f/z8A/z8A/n/4/wH4/wHw/4P/H+D/B8D/D/j/Af8/APz/AP//B/7//x8A+P8B8P/7/wHA/w+A/5//HwD/PwD+f/j/Afj/AfD/w/8f4P8HwP8P/P8A/z8A/n/A/w/8/wD4/wH8/+D/B4D/H4D//4H/3/8PAP8/AP5//P8A+P8B8P/D/w/g/wfA/w/8/wD/PwD+f+D/D/z/APj/Af5/4P8HwP8P4P+H/x8A/z8A/n/8/wDw/wPA/3/g/+P/B+D/B8D/D/5/AP8/AP5/4P8H/P8A+P8B/n/g/wfA/w/w/4f/HwD/PwD/P/z/APj/AfD/8/8D4P8PAP+//x8A/v8A4P8f+P/w/wP8/wD4/wH/P+D/B8D/D/D/g/8fAP8/AP8//P8A+P8B+P/z/wPg/w+A/5//HwD//wD4//9/APz/B4D///8DwP9/APD/B/4/+P+B/x8A/z+A/x/8/wD4/wH4//H/A+D/B4D/n/8fAP9/APz//38A/P8HwP///wPg/38A/P//D4D//wPA//9/APj/PwD4/wEAAPz/8P8D4P8HwP+P/x8A/z8A/P/+fwD8/wPA////A+D/PwD+//8PgP//A+D//38A/P8/AP7//wHw//8B4P//DwD//x8A/H8AAAD+f/5/APz/A+D/9/8D4P8fAP7//w+A//8B4P//fwD8/x8A////AfD//wHw//8PgP//HwD//z8A/v//APD//wHg//8PAP4fAAAA/7//D4D//wHw//9/APz/DwD///8B8P//APD//w+A//8PgP//PwD+//8A+P//Afj//w+A//8HwP//fwD4/z8A/P//BwD/BwAAgP///wHw//8A+P//D4D//weA//8/AP7/fwD4//8B8P//B8D//wfA//9/APz/PwD///8HwP//APj//z8A/P8HgP///wOA/wEAAMD//z8A/v9/APz//wHw//8DwP//B8D//z8A/P8/AP7//wPg//8A+P//PwD+/wfg////A+D/HwD/v/8fAP7/APD/+/8BwH8AAADg//8HwP//PwD+/z8A/v//AeD//wD4//8fAP7/B8D///8B8P8fAP+//x8A//8A/P/9/wHw/wPg/8f/DwD/PwD+f/z/AOAfAAAA8P//APj//x8A//8HwP///wDw/x8A////DwD//wD4//3/APj/A+D/x/8PgP8fgP8//v8A+P8B/P/g/weA/x/A/w/+fwDgBwAAAPj/HwD///8PgP//APj//38A+P8D4P/n/weA/x8A/z/+fwD8/wH8/+D/B8D/D/D/B/9/APz/gP8f8P8DwP8P+P8B/z8A+AEAAAD8/wPg//f/B8D/HwD/P/8/APz/APz/8P8DwP8P4P8H/z8A/v+A/x/w/wPg/wf+/4D/PwD+f/D/A/j/AeD/B/8/gP8fAH4AAAAA/n8A/P/4/wPg/wfg/4f/HwD+f4D/H/j/AeD/B/z/gP8fAP9/8P8D+P8B8P/D/x/A/x8A/z/+fwD8/wDw/+P/B8D/D4AfAAAAAP8/gP8f/P8B8P8D/P/A/w8A/z/w/wP8/wDw/4P/H8D/D4D/P/5/APz/APj/+f8D4P8PgP/f/w8A/n8A+P/9/wDg/wcAAAAAAID/H/D/A/7/APj/gf8f4P8HgP8f/n8A/n8A+P/x/wPg/wfA/9//DwD+fwD8//9/APD/B8D///8BAP8/APz//x8A8P8DAAAAAADA/w/+fwD/fwD8//D/A/D/A8D/z/8PAP8/APz//n8A8P8D4P///wEA/z8A/v//DwD4/wHg//8/AID/HwD+//8DAPj/AQAAAAAA4P/H/w+A/z8A/n/+fwD4/wHg////AYD/HwD+//8PAPj/AfD//z8AgP8PAP///wEA/P8A8P//BwDA/w8A//9/AAD8/wAAAAAAAPD/+/8BwP8fAP///w8A/P8A8P//PwDA/w8A////AQD8/wD4//8HAMD/D4D//z8AAP7/APj//wAA4P8HgP//DwAA/n8AAAAAAAD4//8/AOD/D4D///8BAP5/APj//wcA4P8HgP//PwAA/n8A/P//AADg/wfA//8HAAD/PwD8/x8AAPD/A8D//wEAAP8/AAAAAAAA/P//BwDw/wPA//8/AAD/PwD8//8AAPD/A8D//wcAAP8/AP7/HwAA8P8B4P//AACA/x8A/v8DAAD4/wHg/z8AAID/HwAAAAAAAP7//wAA8P8D4P//BwCA/x8A/v8fAAD4/wHg//8AAID/HwD//wMAAPj/APD/HwAAwP8PAP9/AAAA/H8A8P8HAADA/wcAAAAAAAD//x8AAPj/APD//wAAwP8PAP//AwAA/P8A8P8fAADA/weA/38AAAD8fwD4/wEAAOD/B4D/HwAAAP4/APj/AQAA4P8BAAAAAACA//8DAAD8fwD4/x8AAOD/B4D/fwAAAP4/APj/AwAA4P8DwP8fAAAA/j8A/P8AAADw/wHA/w8AAAD/DwD8/wAAAPD/AAAAAAAAwP9/AAAA/j8A/P8DAADw/wPA/w8AAAD/HwD8/wAAAPD/AeD/DwAAgP8PAP5/AAAA+H8A4P8HAADA/wcA/n8AAAD8PwAAAAAAAOD/DwAAAP8fAP5/AAAA+P8A4P8HAACA/w8A/n8AAAD4fwDw/wcAAMD/AwD/PwAAAP4/APD/AwAA4P8BAP8/AAAA/x8AAAAAAADw/wMAAID/BwD/PwAAAPx/APD/AwAAwP8DAP8/AAAA/h8A+P8DAADw/wGA/x8AAAD/DwD4/wEAAPj/AID/HwAAwP8HAAAAAAAA+P8BAADg/wOA/x8AAAD+HwD4/wEAAPD/AID/HwAAgP8PAPz/AQAA+H8AwP8PAADA/wMA/P8AAAD+PwDA/w8AAOD/AQAAAAAAAPz/AAAA8P8AwP8PAACA/wcA/P8AAAD4fwDA/w8AAMD/AwD+/wAAAP4fAOD/BwAA8P8BAP5/AACA/w8A4P8HAAD4fwAAAAAAAAD+fwAAAPw/AOD/BwAAwP8DAP5/AAAA/h8A4P8HAADw/wAA/38AAID/BwDw/wMAAPx/AAD/PwAA4P8DAPD/AwAA/x8AAAAAAAAA/z8AAAD/HwDw/wMAAPD/AAD/PwAAgP8HAPD/AwAA/D8AgP8/AADg/wMA+P8BAAD/HwCA/x8AAPj/AAD4/wEAwP8HAAAAAAAAgP8fAACA/wcA+P8BAAD8PwCA/x8AAOD/AQD4/wEAAP8fAMD/HwAA+P8AAPz/AADA/wcAwP8PAAD+PwAA/P8AAPD/AQAAAAAAAMD/DwAA4P8BAPz/AAAA/w8AwP8PAAD4fwAA/P8AAMD/BwDg/w8AAP4/AAD+fwAA8P8BAOD/BwCA/w8AAP5/AAD+fwAAAAAAAADg/wcAAPh/AAD+fwAAwP8DAOD/BwAA/j8AAP5/AADw/wEA8P8HAID/DwAA/z8AAP5/AADw/wMA8P8DAAD/PwCA/x8AAAAAAAAA8P8DAAD/HwAA/z8AAPD/AADw/wMAwP8PAAD/PwAA/n8AAPj/AwDw/wMAgP8fAID/HwAA+P8BAPz/AACA/x8A8P8HAAAAAAAAAPj/AQDA/wcAgP8fAAD+PwAA+P8BAPD/AQCA/x8AgP8PAAD8/wEA/P8AAMD/DwDw/wcAAPz/AID/PwAAwP8PAP7/AQAAAAAAAAD8/wAA8P8BAMD/DwCA/w8AAPz/AAD8fwAAwP8PAPD/AwAA/v8AgP8fAADg/wcA/v8AAAD+fwDw/wcAAOD/D8D/PwAAAAAAAAAA/n8AAP5/AADg/wcA8P8DAAD+fwCA/x8AAOD/BwD+/wAAAP9/APD/BwAA8P8HwP8/AAAA/z8A/v8BAADw/w/+/w8AAAAAAAAAAP8/AID/HwAA8P8DAP7/AAAA/z8A8P8HAADw/wPA/z8AAID/PwD+/wEAAPj/A/j/DwAAgP9/8P9/AAAA+P////8BAAAAAAAAAID/HwDw/wcAAPj/AcD/PwAAgP8fAP7/AQAA+P8B+P8PAADA/z/g/38AAAD8/+///wEAAMD/////DwAAAPz///9/AAAAAAAAAADA/w8A/v8BAAD8/wH4/wcAAMD/H+D/PwAAAPz/w///AQAA4P////8PAAAA/v///38AAADg/////wMAAAD+////HwAAAAAAAAAA4P8P4P8/AAAA/v+B//8BAADg/////w8AAAD+////fwAAAPD/////AwAAAP////8fAAAA8P///38AAAAA/////wMAAAAAAAAAAPD/H///DwAAAP////9/AAAA8P////8DAAAA/////w8AAAD4////fwAAAID/////AwAAAPj///8fAAAAgP///38AAAAAAAAAAAD4/////wEAAID/////DwAAAPj///9/AAAAgP////8DAAAA/P///x8AAADA////fwAAAAD8////AwAAAMD///8PAAAAAAAAAAAA/P///38AAADA/////wMAAAD8////HwAAAMD///9/AAAAAP7///8DAAAA4P///w8AAAAA/v//fwAAAADg////AwAAAAAAAAAAAP7///8PAAAA4P///38AAAAA/v///wMAAADg////DwAAAAD+//9/AAAAAPD///8DAAAAAP///w8AAAAA8P//PwAAAAAAAAAAAAD/////AwAAAPD///8PAAAAAP///38AAAAA8P///wMAAAAA////DwAAAAD4//9/AAAAAID///8BAAAAAPD//wcAAAAAAAAAAAAA////fwAAAAD4////AwAAAID///8PAAAAAPj//38AAAAAgP///wEAAAAA/P//BwAAAADA//8/AAAAAAD4//8AAAAAAAAAAAAAgP///w8AAAAA/P//fwAAAADA////AQAAAAD8//8PAAAAAMD//z8AAAAAAPz//wAAAAAAwP//BwAAAAAA+P8PAAAAAAAAAAAAAOD///8BAAAAAP7//w8AAAAA4P//PwAAAAAA/v//AAAAAADg//8HAAAAAAD+/x8AAAAAAMD/PwAAAAAAAPh/AAAAAAAAAAAAAADg//8/AAAAAAD+//8AAAAAAOD//wcAAAAAAP//HwAAAAAA4P9/AAAAAAAA/v8AAAAAAADA/wMAAAAAAACAAAAAAAAAAAAAAAAA8P//BwAAAAAA//8fAAAAAADw/38AAAAAAAD+/wEAAAAAAOD/AwAAAAAAAPwPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPj/fwAAAAAAAP//AQAAAAAA8P8HAAAAAAAA/g8AAAAAAAAADwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4/wcAAAAAAAD/HwAAAAAAAOA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8H8AAAAAAAAAOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',CM_NX=582,CM_NY=128,CM_DX=0.375,CM_X0=-123,CM_Y0=-24;
+// ===== 二維格子波茲曼法（LBM）模擬核心 =====
+// D2Q9；He–Luo 不可壓縮平衡分布（穩態時無壓縮性誤差）；TRT 碰撞（Λ = 1/4）；τ < 0.6 時加 Smagorinsky 渦黏性維持穩定（Cs ≈ 0.12，只在剪切強處增加黏滯）。
+// 入口：Zou–He 速度邊界（拋物線分布，流量 Q = U·W 完全固定，正反兩向相同）；出口：固定壓力（ρ = 1，保留非平衡部分）；固體：半途反彈。
+// 單位為格子單位（不是物理單位）。Re = U·W/ν，W 為入口主通道寬（格數）。
+// τ < TAU_LES 時加 Smagorinsky 渦黏性：在本流道中純 TRT 於 τ ≈ 0.53–0.54 會發散（加速器的壓力修正會使範圍擴大到 Re 65–90），故門檻設 0.6
+const TAU_LES=.6;
+const EX=[0,1,0,-1,0,1,-1,-1,1],EY=[0,0,1,0,-1,1,1,-1,-1],WT=[4/9,1/9,1/9,1/9,1/9,1/36,1/36,1/36,1/36],OP=[0,3,4,1,2,7,8,5,6];
+function Sim(NX,NY){this.NX=NX;this.NY=NY;const n=NX*NY;this.n=n;this.f=new Float32Array(9*n);this.g=new Float32Array(9*n);this.solid=new Uint8Array(n);
+ this.ux=new Float32Array(n);this.uy=new Float32Array(n);this.rho=new Float32Array(n).fill(1);this.c=new Float32Array(n);this.c2=new Float32Array(n);
+ this.dp=0;this.xa=0;this.xb=0;this.U=.1;this.tau=.55;this.stripe=0;this.cy=(NY-1)/2;this.W=8;this.prof=new Float32Array(NY);this.dpHist=[];this.ns=0}
+// 不可壓縮平衡分布：feq = w_i[ρ + 3c·u + 4.5(c·u)² − 1.5u²]（ρ0 = 1）
+function feq(i,r,ux,uy){const cu=3*(EX[i]*ux+EY[i]*uy);return WT[i]*(r+cu+.5*cu*cu-1.5*(ux*ux+uy*uy))}
+
+// ---- 幾何 ----
+// P.stl：封面 STL 模型的俯視截面（400×64 遮罩）；P.straight：同中心線的直管；P.segs：第四關的單節模組清單（角度陣列，上下交錯）
+// 第一～三關範本（第九版起）：主流拉直＋（第十版）把直通道切出來的零星小牆塊連回旁邊的大牆塊。回傳 400×64 的流體遮罩（1＝流體），依寬度快取。
+// 小牆塊（面積 < 60 格、未碰到外框）以最短直線連到最近的大牆塊，線寬 3 格。
+const MAINMASK={};
+function mainMask(w){if(MAINMASK[w])return MAINMASK[w];const NX=400,NY=64,bin=atob(STL_MASK),f=new Uint8Array(NX*NY),mh=(w-1)/2,inBand=(x,y)=>x>=42&&x<306&&Math.abs(y-STL_CY)<=mh+.01;
+ for(let b=0;b<NX*NY;b++){const x=b%NX,y=(b/NX)|0;f[b]=((bin.charCodeAt(b>>3)>>(b&7))&1)||inBand(x,y)?1:0}
+ const lab=new Int32Array(NX*NY).fill(-1),size=[],edge=[],N4=[[1,0],[-1,0],[0,1],[0,-1]];
+ for(let k=0;k<NX*NY;k++){if(f[k]||lab[k]>=0)continue;const id=size.length,q=[k];lab[k]=id;let e=false;for(let h=0;h<q.length;h++){const c=q[h],x=c%NX,y=(c/NX)|0;if(x===0||y===0||x===NX-1||y===NY-1)e=true;for(const d of N4){const X=x+d[0],Y=y+d[1];if(X<0||Y<0||X>=NX||Y>=NY)continue;const j=Y*NX+X;if(!f[j]&&lab[j]<0){lab[j]=id;q.push(j)}}}size.push(q.length);edge.push(e)}
+ const big=id=>id>=0&&(edge[id]||size[id]>=60);
+ // 每個小牆塊：找出與「大牆塊」最近的一對格子（直線距離），沿這條直線填成 3 格粗的牆（不進入直通道）
+ for(let id=0;id<size.length;id++){if(big(id))continue;let best=null;
+  for(let k=0;k<NX*NY;k++){if(lab[k]!==id)continue;const x=k%NX,y=(k/NX)|0;for(let dy=-12;dy<=12;dy++)for(let dx=-12;dx<=12;dx++){const X=x+dx,Y=y+dy;if(X<0||Y<0||X>=NX||Y>=NY)continue;const j=Y*NX+X;if(!f[j]&&big(lab[j])){const d=dx*dx+dy*dy;if(!best||d<best[0])best=[d,x,y,X,Y]}}}
+  if(!best)continue;const[,x0,y0,x1,y1]=best,n=Math.max(Math.abs(x1-x0),Math.abs(y1-y0))*2+1;
+  for(let t=0;t<=n;t++){const x=Math.round(x0+(x1-x0)*t/n),y=Math.round(y0+(y1-y0)*t/n);for(let ey=-1;ey<=1;ey++)for(let ex=-1;ex<=1;ex++){const X=x+ex,Y=y+ey;if(X>=0&&Y>=0&&X<NX&&Y<NY&&!inBand(X,Y))f[Y*NX+X]=0}}}
+ return MAINMASK[w]=f}
+Sim.prototype.geom=function(P,mirror){const{NX,NY,solid}=this;this.gkey=JSON.stringify(P)+(mirror?'|m':'');
+ if(P.stl){const bin=atob(STL_MASK);
+  const sc=P.sc||1;// sc：網格倍率（驗證用，把 400×64 遮罩放大 sc 倍）
+  // P.main：把主流「拉直」——在閥體範圍（x = 42–305 格）沿中心線挖一條寬 P.main 格的直通道（第九版，第一～三關用；封面與結論仍用原始截面）
+  const mh=P.main?(P.main-1)/2:-1;
+  for(let y=0;y<NY;y++)for(let x=0;x<NX;x++){const X=mirror?NX-1-x:x,b=Math.floor(y/sc)*400+Math.floor(X/sc);let fl=(bin.charCodeAt(b>>3)>>(b&7))&1;if(P.straight)fl=Math.abs((y+.5)/sc-.5-STL_CY)<4.5?1:0;
+   else if(mh>=0)fl=mainMask(P.main)[b];solid[y*NX+x]=fl?0:1}}
+ else if(P.ref){this.refGeom(P,mirror)}
+ else if(P.segs){this.segGeom(P,mirror)}
+ else{const W=P.wm,cy=(NY-1)/2;for(let y=0;y<NY;y++)for(let x=0;x<NX;x++)solid[y*NX+x]=Math.abs(y-cy)<W/2?0:1}
+ this.finish(P,mirror)};
+// 第四關：每一節 = 一個水滴形島（尖端半徑 r2、圓鈍端半徑 R）內側貼齊筆直主通道，迴圈沿島外側繞過圓鈍端；
+// 分流角 θ = 島外緣與主通道的夾角（R = r2 + L·tan(θ/2)，R 有上限時改縮短 L）。各節上下交錯，像封面範本一樣排列。
+// 正向（左→右）先經過圓鈍端；反向時流體在尖端以淺角進入迴圈，繞過圓鈍端後逆向衝回主通道。
+Sim.prototype.segGeom=function(P,mirror){const{NX,NY,solid}=this,cy=(NY-1)/2,W=P.wm,g=P.g,r2=1,pitch=P.pitch,x0=P.x0,ov=P.ov||0,Rmax=(NY/2-2-W/2+ov-g)/2,isl=[];
+ P.segs.forEach((al,i)=>{const t=Math.tan(al*Math.PI/360),sp=P.one?pitch:2*pitch;let R=Math.min(Rmax,r2+P.L*t),L=(R-r2)/t;if(L+R+r2+2*g+3>sp){L=sp-R-r2-2*g-3;R=Math.min(R,r2+L*t);L=(R-r2)/t}
+  const sg=P.one||i%2===0?1:-1,tip=x0+(i+1)*pitch+R;isl.push({tip,sg,R,L,h:Math.hypot(L,R-r2),ax:L/Math.hypot(L,R-r2),ay:(r2-R)/Math.hypot(L,R-r2),b:(R-r2)/Math.hypot(L,R-r2)})});
+ this.isl=isl;
+ const sd=(X,dy,sg)=>{let m=1e9;const v0=sg*dy-W/2+ov;for(const q of isl){if(q.sg!==sg)continue;const a=Math.sqrt(1-q.b*q.b),u=X-q.tip+q.L,v=v0-q.R,py=u*q.ax+v*q.ay,px=Math.abs(-u*q.ay+v*q.ax),k=-q.b*px+a*py;
+   const d=k<0?Math.hypot(px,py)-q.R:k>a*q.h?Math.hypot(px,py-q.h)-r2:(a*px+q.b*py)-q.R;if(d<m)m=d}return m};
+ for(let y=0;y<NY;y++)for(let x=0;x<NX;x++){const X=mirror?NX-1-x:x,dy=y-cy;let fl=Math.abs(dy)<W/2;
+  if(Math.abs(dy)<NY/2-1.5){const sg=dy>0?1:-1,m=sd(X,dy,sg);if(!fl)fl=m>0&&m<g;else if(ov&&sg*dy>W/2-ov-.5&&m<=0)fl=false;
+   // ov > 0：島往中心線伸入 ov 格，主通道被交錯的島擠成蛇行（另一側的島不會進到這一側）
+   if(ov&&fl&&Math.abs(dy)<W/2){const m2=sd(X,dy,-sg);if(m2<=0&&-sg*dy>W/2-ov-.5)fl=false}}solid[y*NX+x]=fl?0:1}};
+// 第十一版：依使用者提供的參考圖建立的經典特斯拉閥（第一～三關）。主通道是上下交錯的直線折線（寬 W，與水平夾角 φ）；
+// 每個轉折點外側接一個「P」形迴圈：紅色反向（左→右）的水到轉折點時，主通道轉彎，迴圈入口卻沿著來流方向筆直延伸（長 Lb），
+// 接著半圓迴轉（中心線半徑 R），再沿與來流相反的方向直線回到下游那段主通道，與主流以 180° − 2φ 交會（參考圖的紅色箭頭）。
+// 藍色正向（右→左）時，迴圈的兩個接口都朝向後方，水大多沿主通道走（參考圖的藍色箭頭）。圓角由距離場自然形成，邊緣平順。
+Sim.prototype.refGeom=function(P,mirror){const{NX,NY,solid}=this,cy=(NY-1)/2,W=P.W,g=P.g,A=P.A,ph=P.phi*Math.PI/180,n=P.n,Lb=P.Lb,R=P.R,p=2*A/Math.tan(ph);
+ // 第十三版：頭尾兩段只走半個節距（從中心線到第一個轉折點），與中間各段同一個斜率，所以第一個與最後一個迴圈的形狀和其他迴圈完全相同
+ const x0=Math.round((NX-n*p)/2),V=[[x0-p/2,cy]];for(let i=1;i<=n;i++)V.push([x0+(i-1)*p,cy+(i%2?1:-1)*A]);V.push([x0+(n-1)*p+p/2,cy]);
+ const caps=[],arcs=[],cap=(a,b,r)=>caps.push([a[0],a[1],b[0],b[1],r]);
+ cap([-5,cy],V[0],W/2);cap(V[n+1],[NX+5,cy],W/2);for(let i=0;i<=n;i++)cap(V[i],V[i+1],W/2);
+ this.loops=[];
+ for(let i=1;i<=n;i++){const v=V[i],up=i%2?1:-1,u=(a,b)=>{const x=b[0]-a[0],y=b[1]-a[1],l=Math.hypot(x,y);return[x/l,y/l]},a=u(V[i-1],v),b=u(v,V[i+1]);
+  // 迴圈轉向下游那一側：上方轉折點順時針（法向量指向右下）、下方轉折點逆時針
+  const nn=up>0?[a[1],-a[0]]:[-a[1],a[0]],Q=[v[0]+a[0]*Lb,v[1]+a[1]*Lb],C=[Q[0]+nn[0]*R,Q[1]+nn[1]*R],Q2=[Q[0]+2*R*nn[0],Q[1]+2*R*nn[1]];
+  // 回程直線 Q2 − s·a 與下游主通道 v + t·b 的交點
+  const det=-a[0]*b[1]+a[1]*b[0],rx=v[0]-Q2[0],ry=v[1]-Q2[1],sx=(rx*(-b[1])-ry*(-b[0]))/det,M=[Q2[0]-a[0]*sx,Q2[1]-a[1]*sx];
+  cap(v,Q,g/2);cap(Q2,M,g/2);arcs.push([C[0],C[1],R,a[0],a[1],g/2]);this.loops.push({v,Q,C,Q2,M})}
+ const dseg=(x,y,q)=>{const dx=q[2]-q[0],dy=q[3]-q[1],l2=dx*dx+dy*dy||1e-9,t=Math.max(0,Math.min(1,((x-q[0])*dx+(y-q[1])*dy)/l2));return Math.hypot(x-q[0]-t*dx,y-q[1]-t*dy)};
+ for(let y=0;y<NY;y++)for(let x=0;x<NX;x++){const X=mirror?NX-1-x:x;let fl=false;
+  if(y>=1&&y<=NY-2){for(const q of caps)if(dseg(X,y,q)<q[4]){fl=true;break}
+   if(!fl)for(const c of arcs){const dx=X-c[0],dy=y-c[1];if(dx*c[3]+dy*c[4]>=0&&Math.abs(Math.hypot(dx,dy)-c[2])<c[5]){fl=true;break}}}
+  solid[y*NX+x]=fl?0:1}
+ // 第十三版：去掉格點化造成的細尖牆角（島的尖端只有 1–2 格寬時，會在格點上變成鋸齒狀的突刺，干擾渦流）：
+ // 對牆做一次 3×3 的「侵蝕後膨脹」（形態學開運算），寬度不到 3 格的牆尖會被修圓，其他牆面不變；外框不處理。
+ const er=new Uint8Array(NX*NY);for(let y=1;y<NY-1;y++)for(let x=1;x<NX-1;x++){let a=1;for(let j=-1;j<=1&&a;j++)for(let i=-1;i<=1;i++)if(!solid[(y+j)*NX+x+i]){a=0;break}er[y*NX+x]=a}
+ for(let y=2;y<NY-2;y++)for(let x=2;x<NX-2;x++){const k=y*NX+x;if(!solid[k])continue;let a=0;for(let j=-1;j<=1&&!a;j++)for(let i=-1;i<=1;i++)if(er[(y+j)*NX+x+i]){a=1;break}if(!a)solid[k]=0}};
+// 入口剖面、主通道中心、量測截面（整個閥體含迴圈之外 3 格）
+Sim.prototype.finish=function(P,mirror){const{NX,NY,solid}=this;let W=0,cs=0;for(let y=0;y<NY;y++)if(!solid[y*NX]){W++;cs+=y}
+ const cy=cs/W;this.W=W;this.cy=cy;const hw=W/2;let sm=0;for(let y=0;y<NY;y++){this.prof[y]=0;if(!solid[y*NX]){const e=(y-cy)/hw;this.prof[y]=1-e*e;sm+=this.prof[y]}}
+ for(let y=0;y<NY;y++)this.prof[y]*=W/sm;
+ let x0=NX,x1=0;for(let x=0;x<NX;x++){let c=0;for(let y=0;y<NY;y++)if(!solid[y*NX+x]&&Math.abs(y-cy)>W/2)c++;if(c){if(x<x0)x0=x;if(x>x1)x1=x}}
+ if(x1>x0){this.xa=Math.max(2,x0-3);this.xb=Math.min(NX-3,x1+3)}else{this.xa=Math.round(NX*.1);this.xb=Math.round(NX*.9)}};
+
+// ---- 初始流場：主通道 Poiseuille 速度＋線性壓力梯度（只加快收斂，不影響穩態結果） ----
+Sim.prototype.init=function(){const{n,f,solid,NX}=this,nu=(this.tau-.5)/3,G=12*nu*this.U/(this.W*this.W);
+ for(let k=0;k<n;k++){if(solid[k]){for(let i=0;i<9;i++)f[i*n+k]=0;continue}const x=k%NX,y=(k/NX)|0,r=1+3*G*(NX-1-x),u=Math.abs(y-this.cy)<this.W/2?this.U*this.prof[y]:0;for(let i=0;i<9;i++)f[i*n+k]=feq(i,r,u,0)}
+ this.ux.fill(0);this.uy.fill(0);this.rho.fill(1);this.c.fill(0);this.dp=0;this.dpHist=[];this.ns=0;this.lastBoost=0;this.rAvg=null};
+
+// 由分布函數重算密度與速度（載入快取或背景執行緒的狀態後使用）
+Sim.prototype.macro=function(){const{n,f,solid,rho,ux,uy}=this;for(let k=0;k<n;k++){if(solid[k]){rho[k]=1;ux[k]=uy[k]=0;continue}let r=0,x=0,y=0;for(let i=0;i<9;i++){const v=f[i*n+k];r+=v;x+=EX[i]*v;y+=EY[i]*v}rho[k]=r;ux[k]=x;uy[k]=y}};
+// ---- 一個時間步 ----
+Sim.prototype.step=function(){const{NX,NY,n,f,g,solid,rho,ux:UX,uy:UY}=this;this.ns++;const U=this.U,tl=this.tau,sm=tl<TAU_LES,n2=2*n,n3=3*n,n4=4*n,n5=5*n,n6=6*n,n7=7*n,n8=8*n;
+ for(let y=0;y<NY;y++)for(let x=0;x<NX;x++){const k=y*NX+x;if(solid[k])continue;
+  const f0=f[k],f1=f[n+k],f2=f[n2+k],f3=f[n3+k],f4=f[n4+k],f5=f[n5+k],f6=f[n6+k],f7=f[n7+k],f8=f[n8+k];
+  const r=f0+f1+f2+f3+f4+f5+f6+f7+f8,ux=f1-f3+f5-f6-f7+f8,uy=f2-f4+f5+f6-f7-f8;rho[k]=r;UX[k]=ux;UY[k]=uy;
+  const u2=1.5*(ux*ux+uy*uy),i9=1/9,i36=1/36,e0=4*i9*(r-u2),uxx=4.5*ux*ux,uyy=4.5*uy*uy,
+   e1=i9*(r+3*ux+uxx-u2),e3=i9*(r-3*ux+uxx-u2),e2=i9*(r+3*uy+uyy-u2),e4=i9*(r-3*uy+uyy-u2),
+   vp=ux+uy,vm=ux-uy,wp=4.5*vp*vp,wm=4.5*vm*vm,e5=i36*(r+3*vp+wp-u2),e7=i36*(r-3*vp+wp-u2),e8=i36*(r+3*vm+wm-u2),e6=i36*(r-3*vm+wm-u2);
+  let te=tl;if(sm){const d5=f5-e5,d6=f6-e6,d7=f7-e7,d8=f8-e8,qxx=f1-e1+f3-e3+d5+d6+d7+d8,qyy=f2-e2+f4-e4+d5+d6+d7+d8,qxy=d5-d6+d7-d8;te=.5*(tl+Math.sqrt(tl*tl+.3666*Math.sqrt(qxx*qxx+qyy*qyy+2*qxy*qxy)))}
+  const pp=1/te,pm=1/(.5+.25/(te-.5));let s,a;
+  g[k]=f0-pp*(f0-e0);
+  s=.5*(f1+f3-e1-e3);a=.5*(f1-f3-e1+e3);const p1=f1-pp*s-pm*a,p3=f3-pp*s+pm*a;
+  s=.5*(f2+f4-e2-e4);a=.5*(f2-f4-e2+e4);const p2=f2-pp*s-pm*a,p4=f4-pp*s+pm*a;
+  s=.5*(f5+f7-e5-e7);a=.5*(f5-f7-e5+e7);const p5=f5-pp*s-pm*a,p7=f7-pp*s+pm*a;
+  s=.5*(f6+f8-e6-e8);a=.5*(f6-f8-e6+e8);const p6=f6-pp*s-pm*a,p8=f8-pp*s+pm*a;
+  const xr=x+1>=NX,xl=x===0,yu=y+1>=NY,yd=y===0;
+  if(xr||solid[k+1])g[n3+k]=p1;else g[n+k+1]=p1;
+  if(xl||solid[k-1])g[n+k]=p3;else g[n3+k-1]=p3;
+  if(yu||solid[k+NX])g[n4+k]=p2;else g[n2+k+NX]=p2;
+  if(yd||solid[k-NX])g[n2+k]=p4;else g[n4+k-NX]=p4;
+  if(xr||yu||solid[k+NX+1])g[n7+k]=p5;else g[n5+k+NX+1]=p5;
+  if(xl||yd||solid[k-NX-1])g[n5+k]=p7;else g[n7+k-NX-1]=p7;
+  if(xl||yu||solid[k+NX-1])g[n8+k]=p6;else g[n6+k+NX-1]=p6;
+  if(xr||yd||solid[k-NX+1])g[n6+k]=p8;else g[n8+k-NX+1]=p8}
+ // 入口：Zou–He 速度邊界（不可壓縮形式）
+ for(let y=0;y<NY;y++){let k=y*NX;if(!solid[k]){const u=U*this.prof[y],g2=g[n2+k],g4=g[n4+k],g3=g[n3+k],g6=g[n6+k],g7=g[n7+k];
+   g[n+k]=g3+u*2/3;g[n5+k]=g7-.5*(g2-g4)+u/6;g[n8+k]=g6+.5*(g2-g4)+u/6}
+  // 出口：固定壓力 ρ = 1，速度與非平衡部分由上游一格外插
+  k=y*NX+NX-1;if(!solid[k]){const j=k-1;if(!solid[j]){const rj=rho[j],uxj=UX[j],uyj=UY[j];for(let i=0;i<9;i++)g[i*n+k]=feq(i,1,uxj,uyj)+f[i*n+j]-feq(i,rj,uxj,uyj)}else for(let i=0;i<9;i++)g[i*n+k]=feq(i,1,0,0)}}
+ this.f=g;this.g=f;
+ // 量測：閥體前後截面平均壓力差（p = ρ/3）；每 50 步存一筆，用最近 2000 步判斷收斂
+ let a=0,b=0,na=0,nb=0;for(let y=0;y<NY;y++){const ka=y*NX+this.xa,kb=y*NX+this.xb;if(!solid[ka]){a+=rho[ka];na++}if(!solid[kb]){b+=rho[kb];nb++}}
+ const d=(a/na-b/nb)/3;this.dp+=(d-this.dp)*.02;if(this.ns%50===0){const H=this.dpHist;H.push(d);if(H.length>40)H.shift()}};
+Sim.prototype.stats=function(){const H=this.dpHist,m=H.length;if(m<10)return{mean:this.dp,amp:1,drift:1};let s=0,lo=1e9,hi=-1e9;for(const v of H){s+=v;lo=Math.min(lo,v);hi=Math.max(hi,v)}
+ const mean=s/m,h=m>>1;let a=0,b=0;for(let i=0;i<h;i++){a+=H[i];b+=H[m-h+i]}return{mean,amp:(hi-lo)/2/Math.abs(mean),drift:Math.abs(b-a)/h/Math.abs(mean)}};
+// 截面流量與入口流量 U·W 的相對誤差（收斂判斷用；收斂後 < 0.25%）
+Sim.prototype.qErr=function(x){let q=0;for(let y=0;y<this.NY;y++){const k=y*this.NX+x;if(!this.solid[k])q+=this.ux[k]}return Math.abs(q/(this.U*this.W)-1)};
+// 速度雙線性內插（粒子用；固體格速度為 0）
+Sim.prototype.vel=function(x,y,o){const NX=this.NX,i=x|0,j=y|0,fx=x-i,fy=y-j,k=j*NX+i,ux=this.ux,uy=this.uy,s=this.solid,
+ w0=s[k]?0:(1-fx)*(1-fy),w1=s[k+1]?0:fx*(1-fy),w2=s[k+NX]?0:(1-fx)*fy,w3=s[k+NX+1]?0:fx*fy;
+ o[0]=w0*ux[k]+w1*ux[k+1]+w2*ux[k+NX]+w3*ux[k+NX+1];o[1]=w0*uy[k]+w1*uy[k+1]+w2*uy[k+NX]+w3*uy[k+NX+1];return o};
+// 渦度 ω = ∂v/∂x − ∂u/∂y（中央差分）
+Sim.prototype.vort=function(k){const NX=this.NX;return((this.uy[k+1]-this.uy[k-1])-(this.ux[k+NX]-this.ux[k-NX]))*.5};
+// 歐拉染料（第二關「染料」顯示用）：半拉格朗日對流＋擴散；內插只用流體格（避免染料被牆吸走）
+Sim.prototype.dye=function(s,Dif){const{NX,NY,solid,ux,uy}=this;const c=this.c,c2=this.c2,cy=this.cy,mx=NX-1.001,my=NY-1.001;
+ for(let y=0;y<NY;y++)for(let x=0;x<NX;x++){const k=y*NX+x;if(solid[k]){c2[k]=0;continue}
+  let px=x-ux[k]*s,py=y-uy[k]*s;if(px<0)px=0;else if(px>mx)px=mx;if(py<0)py=0;else if(py>my)py=my;
+  const i=px|0,j=py|0,fx=px-i,fy=py-j,q=j*NX+i,w0=solid[q]?0:(1-fx)*(1-fy),w1=solid[q+1]?0:fx*(1-fy),w2=solid[q+NX]?0:(1-fx)*fy,w3=solid[q+NX+1]?0:fx*fy,ws=w0+w1+w2+w3;
+  c2[k]=ws>1e-6?(w0*c[q]+w1*c[q+1]+w2*c[q+NX]+w3*c[q+NX+1])/ws:c[k]}
+ for(let y=1;y<NY-1;y++)for(let x=1;x<NX-1;x++){const k=y*NX+x;if(solid[k]){c[k]=0;continue}let sm=0,nn=0;
+  if(!solid[k-1]){sm+=c2[k-1];nn++}if(!solid[k+1]){sm+=c2[k+1];nn++}if(!solid[k-NX]){sm+=c2[k-NX];nn++}if(!solid[k+NX]){sm+=c2[k+NX];nn++}
+  c[k]=c2[k]+Dif*(sm-nn*c2[k])}
+ for(let y=0;y<NY;y++)for(let x=0;x<3;x++){const k=y*NX+x;if(!solid[k])c[k]=Math.abs(y-cy)<1.6?1:0}};
+// ---- 收斂加速器（只影響過程，不改變穩態）----
+// 曲折流道的壓力要靠累積質量才建立，非常慢。每次呼叫：比較出口截面流量與入口流量 U·W，
+// 依比例縮放整個壓力擾動（ρ − 1）。當出口流量 = 入口流量時修正量為 0，最後的穩態就是原本 LBM 的解。
+Sim.prototype.boost=function(){const{NX,NY,n,f,solid,rho}=this,x=NX-6;let q=0;for(let y=0;y<NY;y++){const k=y*NX+x;if(!solid[k])q+=this.ux[k]}
+ const r=q/(this.U*this.W);this.rAvg=this.rAvg==null?r:.8*this.rAvg+.2*r;
+ // 穩定流：依當下出口流量比修正；週期性擺動（壓力差振幅 > 0.5% 且遠大於漂移，排除初期的單調上升）時改用滑動平均、較小增益，才不會正負抵銷或過衝
+ const st=this.stats(),osc=this.dpHist.length>=20&&st.amp>.005&&st.amp>3*st.drift,rr=osc?this.rAvg:r;if(!(r>.05)||Math.abs(rr-1)<.003)return 0;this.lastBoost=this.ns;
+ const fac=osc?Math.min(1.05,Math.max(.97,1+.25*(1/rr-1))):Math.min(1.1,Math.max(.95,1+.5*(1/rr-1)));
+ for(let k=0;k<n;k++){if(solid[k])continue;const dr=(rho[k]-1)*(fac-1);for(let i=0;i<9;i++)f[i*n+k]+=WT[i]*dr}return fac};
+// ---- 混合指標（反向追蹤）----
+// 穩態流場下，出口某點的染料濃度 = 從該點「逆著流動」並加上分子擴散隨機漫步、回到入口時落在藍色半邊的機率。
+// 出口截面每一格放 nw 個追蹤點反向追回入口，得到每格藍色比例 φ，M = 1 − 平均|φ − φ̄|／[2φ̄(1 − φ̄)]（0＝完全分層，1＝完全均勻）。
+// 沒有數值擴散；只適用於穩定流（非穩態時為近似）。Dm 為分子擴散係數（格子單位）。
+Sim.prototype.mixRows=function(){const rows=[],xo=this.NX-4;for(let y=0;y<this.NY;y++)if(!this.solid[y*this.NX+xo])rows.push(y);return rows};
+// 亂數：mulberry32（精確 32 位元整數運算；舊版 LCG 的乘法超過 2^53 會失真，使 M 系統性偏低）
+function makeRng(seed){let a=(seed||7)>>>0;const rnd=()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296};
+ return{rnd,gs:()=>Math.sqrt(-2*Math.log(rnd()||1e-12))*Math.cos(6.283185307*rnd())}}
+// 一個追蹤點：從出口 (x0,y0) 逆著流場＋擴散隨機漫步走回入口；回傳 1＝藍色半邊、0＝黃色半邊、−1＝超過步數上限（未解出）
+// 時間步依當地流速調整（dt = 0.5／|u|，限制在 1–64），每步移動約半格；慢速渦流區步長較大，才不會在封閉渦流裡耗上數十萬步。
+// 碰到牆時時間步減半重試（最多 4 次）。可傳入 st 物件分段續算（介面每幀只算一小段）。
+Sim.prototype.walkBack=function(y0,Dm,R,st,budget){const{NX,NY,solid}=this,o=[0,0],o2=[0,0];if(!st.init){st.x=NX-4;st.y=y0-.3+.6*R.rnd();st.it=0;st.init=1}
+ let x=st.x,y=st.y,it=st.it;const end=Math.min(MIXCAP,it+(budget||MIXCAP));
+ while(x>1&&it<end){it++;this.vel(x,y,o);let dt=Math.max(1,Math.min(64,.5/(Math.hypot(o[0],o[1])+1e-9)));
+  for(let tr=0;tr<5;tr++){const sd=Math.sqrt(2*Dm*dt),mx=Math.max(0,Math.min(NX-1.01,x-o[0]*dt/2)),my=Math.max(0,Math.min(NY-1.01,y-o[1]*dt/2));this.vel(mx,my,o2);
+   let nx=x-o2[0]*dt+sd*R.gs(),ny=y-o2[1]*dt+sd*R.gs();if(nx>NX-1.01)nx=NX-1.01;if(nx<=0){x=0;break}if(ny>.5&&ny<NY-1.5&&!solid[Math.round(ny)*NX+Math.round(nx)]){x=nx;y=ny;break}dt/=2;if(tr<4)this.vel(x,y,o)}}
+ st.x=x;st.y=y;st.it=it;if(x<=1)return y>this.cy?1:0;return it>=MIXCAP?-1:null};
+const MIXCAP=400000;
+// 出口第 y0 列：nw 個追蹤點反向追回入口，回傳落在藍色半邊（y > 主通道中心）的比例
+Sim.prototype.mixRow=function(y0,Dm,nw,seed,out){const R=makeRng(seed);let b=0,c=0,lost=0;for(let w=0;w<nw;w++){const v=this.walkBack(y0,Dm,R,{});if(v>=0){c++;b+=v}else lost++}if(out){out.lost=(out.lost||0)+lost;out.n=(out.n||0)+nw}return c?b/c:.5};
+function mixIndex(phi){const m=phi.reduce((a,v)=>a+v,0)/phi.length;let a=0;for(const v of phi)a+=Math.abs(v-m);return m>0&&m<1?Math.max(0,Math.min(1,1-a/phi.length/(2*m*(1-m)))):0}
+Sim.prototype.mixBack=function(Dm,nw,seed){const out={},phi=this.mixRows().map((y,i)=>this.mixRow(y,Dm,nw,(seed||7)+i*977,out));return{M:mixIndex(phi),phi,lost:out.lost,n:out.n}};
+// ---- 渦流偵測（流場拓樸）----
+// 渦心＝速度為零、且周圍流體繞著它旋轉的點（臨界點中 det(∇u) > 0 的「中心點」）。在每個 2×2 格子內找 u、v 同時變號的點，
+// 用雙線性內插求出零點與速度梯度。回傳每個渦心的位置、旋向（ω 正負）與強度 |ω|。
+Sim.prototype.vortices=function(){const{NX,NY,solid,ux,uy}=this,out=[];
+ for(let y=1;y<NY-2;y++)for(let x=this.xa;x<this.xb;x++){const k=y*NX+x,K=[k,k+1,k+NX,k+NX+1];if(K.some(j=>solid[j]))continue;// 第十四版：只要求 2×2 格本身是流體（舊版排除所有貼牆格，窄流道裡貼著牆的交會渦流會被漏掉；網格加倍驗證反向確實有渦流）
+  const u=K.map(j=>ux[j]),v=K.map(j=>uy[j]);if(Math.min(...u)>0||Math.max(...u)<0||Math.min(...v)>0||Math.max(...v)<0)continue;
+  // 雙線性：f(s,t)=a+b s+c t+d s t；牛頓法找 u=v=0
+  const cf=q=>[q[0],q[1]-q[0],q[2]-q[0],q[0]-q[1]-q[2]+q[3]],A=cf(u),B=cf(v);let s=.5,t=.5,ok=false;
+  for(let i=0;i<12;i++){const fu=A[0]+A[1]*s+A[2]*t+A[3]*s*t,fv=B[0]+B[1]*s+B[2]*t+B[3]*s*t,us=A[1]+A[3]*t,ut=A[2]+A[3]*s,vs=B[1]+B[3]*t,vt=B[2]+B[3]*s,dt=us*vt-ut*vs;
+   if(Math.abs(dt)<1e-14)break;s-=(fu*vt-fv*ut)/dt;t-=(us*fv-vs*fu)/dt;if(Math.abs(fu)+Math.abs(fv)<1e-10){ok=true;break}}
+  if(!(s>=0&&s<=1&&t>=0&&t<=1))continue;const us=A[1]+A[3]*t,ut=A[2]+A[3]*s,vs=B[1]+B[3]*t,vt=B[2]+B[3]*s,det=us*vt-ut*vs,w=vs-ut;
+  if(det>0&&Math.abs(w)>.01*this.U/this.W*9)out.push({x:x+s,y:y+t,w})}
+ // 合併 3 格內的重複渦心（保留較強者）
+ out.sort((a,b)=>Math.abs(b.w)-Math.abs(a.w));const m=[];for(const v of out)if(!m.some(q=>Math.hypot(q.x-v.x,q.y-v.y)<3))m.push(v);return m};
+// 收斂判斷（所有關卡共用）：步數足夠、最近 1000 步加速器未動作、下游流量誤差 < 0.3%、壓力差漂移 < 0.1%、振幅 < 1%
+Sim.prototype.settled=function(){const t=this.stats();return this.ns>3000&&this.ns-this.lastBoost>1000&&this.qErr(this.xb)<.003&&t.drift<.001&&t.amp<.01};
+const LBM_SRC="// ===== 二維格子波茲曼法（LBM）模擬核心 =====\n// D2Q9；He–Luo 不可壓縮平衡分布（穩態時無壓縮性誤差）；TRT 碰撞（Λ = 1/4）；τ < 0.6 時加 Smagorinsky 渦黏性維持穩定（Cs ≈ 0.12，只在剪切強處增加黏滯）。\n// 入口：Zou–He 速度邊界（拋物線分布，流量 Q = U·W 完全固定，正反兩向相同）；出口：固定壓力（ρ = 1，保留非平衡部分）；固體：半途反彈。\n// 單位為格子單位（不是物理單位）。Re = U·W/ν，W 為入口主通道寬（格數）。\n// τ < TAU_LES 時加 Smagorinsky 渦黏性：在本流道中純 TRT 於 τ ≈ 0.53–0.54 會發散（加速器的壓力修正會使範圍擴大到 Re 65–90），故門檻設 0.6\nconst TAU_LES=.6;\nconst EX=[0,1,0,-1,0,1,-1,-1,1],EY=[0,0,1,0,-1,1,1,-1,-1],WT=[4/9,1/9,1/9,1/9,1/9,1/36,1/36,1/36,1/36],OP=[0,3,4,1,2,7,8,5,6];\nfunction Sim(NX,NY){this.NX=NX;this.NY=NY;const n=NX*NY;this.n=n;this.f=new Float32Array(9*n);this.g=new Float32Array(9*n);this.solid=new Uint8Array(n);\n this.ux=new Float32Array(n);this.uy=new Float32Array(n);this.rho=new Float32Array(n).fill(1);this.c=new Float32Array(n);this.c2=new Float32Array(n);\n this.dp=0;this.xa=0;this.xb=0;this.U=.1;this.tau=.55;this.stripe=0;this.cy=(NY-1)/2;this.W=8;this.prof=new Float32Array(NY);this.dpHist=[];this.ns=0}\n// 不可壓縮平衡分布：feq = w_i[ρ + 3c·u + 4.5(c·u)² − 1.5u²]（ρ0 = 1）\nfunction feq(i,r,ux,uy){const cu=3*(EX[i]*ux+EY[i]*uy);return WT[i]*(r+cu+.5*cu*cu-1.5*(ux*ux+uy*uy))}\n\n// ---- 幾何 ----\n// P.stl：封面 STL 模型的俯視截面（400×64 遮罩）；P.straight：同中心線的直管；P.segs：第四關的單節模組清單（角度陣列，上下交錯）\n// 第一～三關範本（第九版起）：主流拉直＋（第十版）把直通道切出來的零星小牆塊連回旁邊的大牆塊。回傳 400×64 的流體遮罩（1＝流體），依寬度快取。\n// 小牆塊（面積 < 60 格、未碰到外框）以最短直線連到最近的大牆塊，線寬 3 格。\nconst MAINMASK={};\nfunction mainMask(w){if(MAINMASK[w])return MAINMASK[w];const NX=400,NY=64,bin=atob(STL_MASK),f=new Uint8Array(NX*NY),mh=(w-1)/2,inBand=(x,y)=>x>=42&&x<306&&Math.abs(y-STL_CY)<=mh+.01;\n for(let b=0;b<NX*NY;b++){const x=b%NX,y=(b/NX)|0;f[b]=((bin.charCodeAt(b>>3)>>(b&7))&1)||inBand(x,y)?1:0}\n const lab=new Int32Array(NX*NY).fill(-1),size=[],edge=[],N4=[[1,0],[-1,0],[0,1],[0,-1]];\n for(let k=0;k<NX*NY;k++){if(f[k]||lab[k]>=0)continue;const id=size.length,q=[k];lab[k]=id;let e=false;for(let h=0;h<q.length;h++){const c=q[h],x=c%NX,y=(c/NX)|0;if(x===0||y===0||x===NX-1||y===NY-1)e=true;for(const d of N4){const X=x+d[0],Y=y+d[1];if(X<0||Y<0||X>=NX||Y>=NY)continue;const j=Y*NX+X;if(!f[j]&&lab[j]<0){lab[j]=id;q.push(j)}}}size.push(q.length);edge.push(e)}\n const big=id=>id>=0&&(edge[id]||size[id]>=60);\n // 每個小牆塊：找出與「大牆塊」最近的一對格子（直線距離），沿這條直線填成 3 格粗的牆（不進入直通道）\n for(let id=0;id<size.length;id++){if(big(id))continue;let best=null;\n  for(let k=0;k<NX*NY;k++){if(lab[k]!==id)continue;const x=k%NX,y=(k/NX)|0;for(let dy=-12;dy<=12;dy++)for(let dx=-12;dx<=12;dx++){const X=x+dx,Y=y+dy;if(X<0||Y<0||X>=NX||Y>=NY)continue;const j=Y*NX+X;if(!f[j]&&big(lab[j])){const d=dx*dx+dy*dy;if(!best||d<best[0])best=[d,x,y,X,Y]}}}\n  if(!best)continue;const[,x0,y0,x1,y1]=best,n=Math.max(Math.abs(x1-x0),Math.abs(y1-y0))*2+1;\n  for(let t=0;t<=n;t++){const x=Math.round(x0+(x1-x0)*t/n),y=Math.round(y0+(y1-y0)*t/n);for(let ey=-1;ey<=1;ey++)for(let ex=-1;ex<=1;ex++){const X=x+ex,Y=y+ey;if(X>=0&&Y>=0&&X<NX&&Y<NY&&!inBand(X,Y))f[Y*NX+X]=0}}}\n return MAINMASK[w]=f}\nSim.prototype.geom=function(P,mirror){const{NX,NY,solid}=this;this.gkey=JSON.stringify(P)+(mirror?'|m':'');\n if(P.stl){const bin=atob(STL_MASK);\n  const sc=P.sc||1;// sc：網格倍率（驗證用，把 400×64 遮罩放大 sc 倍）\n  // P.main：把主流「拉直」——在閥體範圍（x = 42–305 格）沿中心線挖一條寬 P.main 格的直通道（第九版，第一～三關用；封面與結論仍用原始截面）\n  const mh=P.main?(P.main-1)/2:-1;\n  for(let y=0;y<NY;y++)for(let x=0;x<NX;x++){const X=mirror?NX-1-x:x,b=Math.floor(y/sc)*400+Math.floor(X/sc);let fl=(bin.charCodeAt(b>>3)>>(b&7))&1;if(P.straight)fl=Math.abs((y+.5)/sc-.5-STL_CY)<4.5?1:0;\n   else if(mh>=0)fl=mainMask(P.main)[b];solid[y*NX+x]=fl?0:1}}\n else if(P.ref){this.refGeom(P,mirror)}\n else if(P.segs){this.segGeom(P,mirror)}\n else{const W=P.wm,cy=(NY-1)/2;for(let y=0;y<NY;y++)for(let x=0;x<NX;x++)solid[y*NX+x]=Math.abs(y-cy)<W/2?0:1}\n this.finish(P,mirror)};\n// 第四關：每一節 = 一個水滴形島（尖端半徑 r2、圓鈍端半徑 R）內側貼齊筆直主通道，迴圈沿島外側繞過圓鈍端；\n// 分流角 θ = 島外緣與主通道的夾角（R = r2 + L·tan(θ/2)，R 有上限時改縮短 L）。各節上下交錯，像封面範本一樣排列。\n// 正向（左→右）先經過圓鈍端；反向時流體在尖端以淺角進入迴圈，繞過圓鈍端後逆向衝回主通道。\nSim.prototype.segGeom=function(P,mirror){const{NX,NY,solid}=this,cy=(NY-1)/2,W=P.wm,g=P.g,r2=1,pitch=P.pitch,x0=P.x0,ov=P.ov||0,Rmax=(NY/2-2-W/2+ov-g)/2,isl=[];\n P.segs.forEach((al,i)=>{const t=Math.tan(al*Math.PI/360),sp=P.one?pitch:2*pitch;let R=Math.min(Rmax,r2+P.L*t),L=(R-r2)/t;if(L+R+r2+2*g+3>sp){L=sp-R-r2-2*g-3;R=Math.min(R,r2+L*t);L=(R-r2)/t}\n  const sg=P.one||i%2===0?1:-1,tip=x0+(i+1)*pitch+R;isl.push({tip,sg,R,L,h:Math.hypot(L,R-r2),ax:L/Math.hypot(L,R-r2),ay:(r2-R)/Math.hypot(L,R-r2),b:(R-r2)/Math.hypot(L,R-r2)})});\n this.isl=isl;\n const sd=(X,dy,sg)=>{let m=1e9;const v0=sg*dy-W/2+ov;for(const q of isl){if(q.sg!==sg)continue;const a=Math.sqrt(1-q.b*q.b),u=X-q.tip+q.L,v=v0-q.R,py=u*q.ax+v*q.ay,px=Math.abs(-u*q.ay+v*q.ax),k=-q.b*px+a*py;\n   const d=k<0?Math.hypot(px,py)-q.R:k>a*q.h?Math.hypot(px,py-q.h)-r2:(a*px+q.b*py)-q.R;if(d<m)m=d}return m};\n for(let y=0;y<NY;y++)for(let x=0;x<NX;x++){const X=mirror?NX-1-x:x,dy=y-cy;let fl=Math.abs(dy)<W/2;\n  if(Math.abs(dy)<NY/2-1.5){const sg=dy>0?1:-1,m=sd(X,dy,sg);if(!fl)fl=m>0&&m<g;else if(ov&&sg*dy>W/2-ov-.5&&m<=0)fl=false;\n   // ov > 0：島往中心線伸入 ov 格，主通道被交錯的島擠成蛇行（另一側的島不會進到這一側）\n   if(ov&&fl&&Math.abs(dy)<W/2){const m2=sd(X,dy,-sg);if(m2<=0&&-sg*dy>W/2-ov-.5)fl=false}}solid[y*NX+x]=fl?0:1}};\n// 第十一版：依使用者提供的參考圖建立的經典特斯拉閥（第一～三關）。主通道是上下交錯的直線折線（寬 W，與水平夾角 φ）；\n// 每個轉折點外側接一個「P」形迴圈：紅色反向（左→右）的水到轉折點時，主通道轉彎，迴圈入口卻沿著來流方向筆直延伸（長 Lb），\n// 接著半圓迴轉（中心線半徑 R），再沿與來流相反的方向直線回到下游那段主通道，與主流以 180° − 2φ 交會（參考圖的紅色箭頭）。\n// 藍色正向（右→左）時，迴圈的兩個接口都朝向後方，水大多沿主通道走（參考圖的藍色箭頭）。圓角由距離場自然形成，邊緣平順。\nSim.prototype.refGeom=function(P,mirror){const{NX,NY,solid}=this,cy=(NY-1)/2,W=P.W,g=P.g,A=P.A,ph=P.phi*Math.PI/180,n=P.n,Lb=P.Lb,R=P.R,p=2*A/Math.tan(ph);\n // 第十三版：頭尾兩段只走半個節距（從中心線到第一個轉折點），與中間各段同一個斜率，所以第一個與最後一個迴圈的形狀和其他迴圈完全相同\n const x0=Math.round((NX-n*p)/2),V=[[x0-p/2,cy]];for(let i=1;i<=n;i++)V.push([x0+(i-1)*p,cy+(i%2?1:-1)*A]);V.push([x0+(n-1)*p+p/2,cy]);\n const caps=[],arcs=[],cap=(a,b,r)=>caps.push([a[0],a[1],b[0],b[1],r]);\n cap([-5,cy],V[0],W/2);cap(V[n+1],[NX+5,cy],W/2);for(let i=0;i<=n;i++)cap(V[i],V[i+1],W/2);\n this.loops=[];\n for(let i=1;i<=n;i++){const v=V[i],up=i%2?1:-1,u=(a,b)=>{const x=b[0]-a[0],y=b[1]-a[1],l=Math.hypot(x,y);return[x/l,y/l]},a=u(V[i-1],v),b=u(v,V[i+1]);\n  // 迴圈轉向下游那一側：上方轉折點順時針（法向量指向右下）、下方轉折點逆時針\n  const nn=up>0?[a[1],-a[0]]:[-a[1],a[0]],Q=[v[0]+a[0]*Lb,v[1]+a[1]*Lb],C=[Q[0]+nn[0]*R,Q[1]+nn[1]*R],Q2=[Q[0]+2*R*nn[0],Q[1]+2*R*nn[1]];\n  // 回程直線 Q2 − s·a 與下游主通道 v + t·b 的交點\n  const det=-a[0]*b[1]+a[1]*b[0],rx=v[0]-Q2[0],ry=v[1]-Q2[1],sx=(rx*(-b[1])-ry*(-b[0]))/det,M=[Q2[0]-a[0]*sx,Q2[1]-a[1]*sx];\n  cap(v,Q,g/2);cap(Q2,M,g/2);arcs.push([C[0],C[1],R,a[0],a[1],g/2]);this.loops.push({v,Q,C,Q2,M})}\n const dseg=(x,y,q)=>{const dx=q[2]-q[0],dy=q[3]-q[1],l2=dx*dx+dy*dy||1e-9,t=Math.max(0,Math.min(1,((x-q[0])*dx+(y-q[1])*dy)/l2));return Math.hypot(x-q[0]-t*dx,y-q[1]-t*dy)};\n for(let y=0;y<NY;y++)for(let x=0;x<NX;x++){const X=mirror?NX-1-x:x;let fl=false;\n  if(y>=1&&y<=NY-2){for(const q of caps)if(dseg(X,y,q)<q[4]){fl=true;break}\n   if(!fl)for(const c of arcs){const dx=X-c[0],dy=y-c[1];if(dx*c[3]+dy*c[4]>=0&&Math.abs(Math.hypot(dx,dy)-c[2])<c[5]){fl=true;break}}}\n  solid[y*NX+x]=fl?0:1}\n // 第十三版：去掉格點化造成的細尖牆角（島的尖端只有 1–2 格寬時，會在格點上變成鋸齒狀的突刺，干擾渦流）：\n // 對牆做一次 3×3 的「侵蝕後膨脹」（形態學開運算），寬度不到 3 格的牆尖會被修圓，其他牆面不變；外框不處理。\n const er=new Uint8Array(NX*NY);for(let y=1;y<NY-1;y++)for(let x=1;x<NX-1;x++){let a=1;for(let j=-1;j<=1&&a;j++)for(let i=-1;i<=1;i++)if(!solid[(y+j)*NX+x+i]){a=0;break}er[y*NX+x]=a}\n for(let y=2;y<NY-2;y++)for(let x=2;x<NX-2;x++){const k=y*NX+x;if(!solid[k])continue;let a=0;for(let j=-1;j<=1&&!a;j++)for(let i=-1;i<=1;i++)if(er[(y+j)*NX+x+i]){a=1;break}if(!a)solid[k]=0}};\n// 入口剖面、主通道中心、量測截面（整個閥體含迴圈之外 3 格）\nSim.prototype.finish=function(P,mirror){const{NX,NY,solid}=this;let W=0,cs=0;for(let y=0;y<NY;y++)if(!solid[y*NX]){W++;cs+=y}\n const cy=cs/W;this.W=W;this.cy=cy;const hw=W/2;let sm=0;for(let y=0;y<NY;y++){this.prof[y]=0;if(!solid[y*NX]){const e=(y-cy)/hw;this.prof[y]=1-e*e;sm+=this.prof[y]}}\n for(let y=0;y<NY;y++)this.prof[y]*=W/sm;\n let x0=NX,x1=0;for(let x=0;x<NX;x++){let c=0;for(let y=0;y<NY;y++)if(!solid[y*NX+x]&&Math.abs(y-cy)>W/2)c++;if(c){if(x<x0)x0=x;if(x>x1)x1=x}}\n if(x1>x0){this.xa=Math.max(2,x0-3);this.xb=Math.min(NX-3,x1+3)}else{this.xa=Math.round(NX*.1);this.xb=Math.round(NX*.9)}};\n\n// ---- 初始流場：主通道 Poiseuille 速度＋線性壓力梯度（只加快收斂，不影響穩態結果） ----\nSim.prototype.init=function(){const{n,f,solid,NX}=this,nu=(this.tau-.5)/3,G=12*nu*this.U/(this.W*this.W);\n for(let k=0;k<n;k++){if(solid[k]){for(let i=0;i<9;i++)f[i*n+k]=0;continue}const x=k%NX,y=(k/NX)|0,r=1+3*G*(NX-1-x),u=Math.abs(y-this.cy)<this.W/2?this.U*this.prof[y]:0;for(let i=0;i<9;i++)f[i*n+k]=feq(i,r,u,0)}\n this.ux.fill(0);this.uy.fill(0);this.rho.fill(1);this.c.fill(0);this.dp=0;this.dpHist=[];this.ns=0;this.lastBoost=0;this.rAvg=null};\n\n// 由分布函數重算密度與速度（載入快取或背景執行緒的狀態後使用）\nSim.prototype.macro=function(){const{n,f,solid,rho,ux,uy}=this;for(let k=0;k<n;k++){if(solid[k]){rho[k]=1;ux[k]=uy[k]=0;continue}let r=0,x=0,y=0;for(let i=0;i<9;i++){const v=f[i*n+k];r+=v;x+=EX[i]*v;y+=EY[i]*v}rho[k]=r;ux[k]=x;uy[k]=y}};\n// ---- 一個時間步 ----\nSim.prototype.step=function(){const{NX,NY,n,f,g,solid,rho,ux:UX,uy:UY}=this;this.ns++;const U=this.U,tl=this.tau,sm=tl<TAU_LES,n2=2*n,n3=3*n,n4=4*n,n5=5*n,n6=6*n,n7=7*n,n8=8*n;\n for(let y=0;y<NY;y++)for(let x=0;x<NX;x++){const k=y*NX+x;if(solid[k])continue;\n  const f0=f[k],f1=f[n+k],f2=f[n2+k],f3=f[n3+k],f4=f[n4+k],f5=f[n5+k],f6=f[n6+k],f7=f[n7+k],f8=f[n8+k];\n  const r=f0+f1+f2+f3+f4+f5+f6+f7+f8,ux=f1-f3+f5-f6-f7+f8,uy=f2-f4+f5+f6-f7-f8;rho[k]=r;UX[k]=ux;UY[k]=uy;\n  const u2=1.5*(ux*ux+uy*uy),i9=1/9,i36=1/36,e0=4*i9*(r-u2),uxx=4.5*ux*ux,uyy=4.5*uy*uy,\n   e1=i9*(r+3*ux+uxx-u2),e3=i9*(r-3*ux+uxx-u2),e2=i9*(r+3*uy+uyy-u2),e4=i9*(r-3*uy+uyy-u2),\n   vp=ux+uy,vm=ux-uy,wp=4.5*vp*vp,wm=4.5*vm*vm,e5=i36*(r+3*vp+wp-u2),e7=i36*(r-3*vp+wp-u2),e8=i36*(r+3*vm+wm-u2),e6=i36*(r-3*vm+wm-u2);\n  let te=tl;if(sm){const d5=f5-e5,d6=f6-e6,d7=f7-e7,d8=f8-e8,qxx=f1-e1+f3-e3+d5+d6+d7+d8,qyy=f2-e2+f4-e4+d5+d6+d7+d8,qxy=d5-d6+d7-d8;te=.5*(tl+Math.sqrt(tl*tl+.3666*Math.sqrt(qxx*qxx+qyy*qyy+2*qxy*qxy)))}\n  const pp=1/te,pm=1/(.5+.25/(te-.5));let s,a;\n  g[k]=f0-pp*(f0-e0);\n  s=.5*(f1+f3-e1-e3);a=.5*(f1-f3-e1+e3);const p1=f1-pp*s-pm*a,p3=f3-pp*s+pm*a;\n  s=.5*(f2+f4-e2-e4);a=.5*(f2-f4-e2+e4);const p2=f2-pp*s-pm*a,p4=f4-pp*s+pm*a;\n  s=.5*(f5+f7-e5-e7);a=.5*(f5-f7-e5+e7);const p5=f5-pp*s-pm*a,p7=f7-pp*s+pm*a;\n  s=.5*(f6+f8-e6-e8);a=.5*(f6-f8-e6+e8);const p6=f6-pp*s-pm*a,p8=f8-pp*s+pm*a;\n  const xr=x+1>=NX,xl=x===0,yu=y+1>=NY,yd=y===0;\n  if(xr||solid[k+1])g[n3+k]=p1;else g[n+k+1]=p1;\n  if(xl||solid[k-1])g[n+k]=p3;else g[n3+k-1]=p3;\n  if(yu||solid[k+NX])g[n4+k]=p2;else g[n2+k+NX]=p2;\n  if(yd||solid[k-NX])g[n2+k]=p4;else g[n4+k-NX]=p4;\n  if(xr||yu||solid[k+NX+1])g[n7+k]=p5;else g[n5+k+NX+1]=p5;\n  if(xl||yd||solid[k-NX-1])g[n5+k]=p7;else g[n7+k-NX-1]=p7;\n  if(xl||yu||solid[k+NX-1])g[n8+k]=p6;else g[n6+k+NX-1]=p6;\n  if(xr||yd||solid[k-NX+1])g[n6+k]=p8;else g[n8+k-NX+1]=p8}\n // 入口：Zou–He 速度邊界（不可壓縮形式）\n for(let y=0;y<NY;y++){let k=y*NX;if(!solid[k]){const u=U*this.prof[y],g2=g[n2+k],g4=g[n4+k],g3=g[n3+k],g6=g[n6+k],g7=g[n7+k];\n   g[n+k]=g3+u*2/3;g[n5+k]=g7-.5*(g2-g4)+u/6;g[n8+k]=g6+.5*(g2-g4)+u/6}\n  // 出口：固定壓力 ρ = 1，速度與非平衡部分由上游一格外插\n  k=y*NX+NX-1;if(!solid[k]){const j=k-1;if(!solid[j]){const rj=rho[j],uxj=UX[j],uyj=UY[j];for(let i=0;i<9;i++)g[i*n+k]=feq(i,1,uxj,uyj)+f[i*n+j]-feq(i,rj,uxj,uyj)}else for(let i=0;i<9;i++)g[i*n+k]=feq(i,1,0,0)}}\n this.f=g;this.g=f;\n // 量測：閥體前後截面平均壓力差（p = ρ/3）；每 50 步存一筆，用最近 2000 步判斷收斂\n let a=0,b=0,na=0,nb=0;for(let y=0;y<NY;y++){const ka=y*NX+this.xa,kb=y*NX+this.xb;if(!solid[ka]){a+=rho[ka];na++}if(!solid[kb]){b+=rho[kb];nb++}}\n const d=(a/na-b/nb)/3;this.dp+=(d-this.dp)*.02;if(this.ns%50===0){const H=this.dpHist;H.push(d);if(H.length>40)H.shift()}};\nSim.prototype.stats=function(){const H=this.dpHist,m=H.length;if(m<10)return{mean:this.dp,amp:1,drift:1};let s=0,lo=1e9,hi=-1e9;for(const v of H){s+=v;lo=Math.min(lo,v);hi=Math.max(hi,v)}\n const mean=s/m,h=m>>1;let a=0,b=0;for(let i=0;i<h;i++){a+=H[i];b+=H[m-h+i]}return{mean,amp:(hi-lo)/2/Math.abs(mean),drift:Math.abs(b-a)/h/Math.abs(mean)}};\n// 截面流量與入口流量 U·W 的相對誤差（收斂判斷用；收斂後 < 0.25%）\nSim.prototype.qErr=function(x){let q=0;for(let y=0;y<this.NY;y++){const k=y*this.NX+x;if(!this.solid[k])q+=this.ux[k]}return Math.abs(q/(this.U*this.W)-1)};\n// 速度雙線性內插（粒子用；固體格速度為 0）\nSim.prototype.vel=function(x,y,o){const NX=this.NX,i=x|0,j=y|0,fx=x-i,fy=y-j,k=j*NX+i,ux=this.ux,uy=this.uy,s=this.solid,\n w0=s[k]?0:(1-fx)*(1-fy),w1=s[k+1]?0:fx*(1-fy),w2=s[k+NX]?0:(1-fx)*fy,w3=s[k+NX+1]?0:fx*fy;\n o[0]=w0*ux[k]+w1*ux[k+1]+w2*ux[k+NX]+w3*ux[k+NX+1];o[1]=w0*uy[k]+w1*uy[k+1]+w2*uy[k+NX]+w3*uy[k+NX+1];return o};\n// 渦度 ω = ∂v/∂x − ∂u/∂y（中央差分）\nSim.prototype.vort=function(k){const NX=this.NX;return((this.uy[k+1]-this.uy[k-1])-(this.ux[k+NX]-this.ux[k-NX]))*.5};\n// 歐拉染料（第二關「染料」顯示用）：半拉格朗日對流＋擴散；內插只用流體格（避免染料被牆吸走）\nSim.prototype.dye=function(s,Dif){const{NX,NY,solid,ux,uy}=this;const c=this.c,c2=this.c2,cy=this.cy,mx=NX-1.001,my=NY-1.001;\n for(let y=0;y<NY;y++)for(let x=0;x<NX;x++){const k=y*NX+x;if(solid[k]){c2[k]=0;continue}\n  let px=x-ux[k]*s,py=y-uy[k]*s;if(px<0)px=0;else if(px>mx)px=mx;if(py<0)py=0;else if(py>my)py=my;\n  const i=px|0,j=py|0,fx=px-i,fy=py-j,q=j*NX+i,w0=solid[q]?0:(1-fx)*(1-fy),w1=solid[q+1]?0:fx*(1-fy),w2=solid[q+NX]?0:(1-fx)*fy,w3=solid[q+NX+1]?0:fx*fy,ws=w0+w1+w2+w3;\n  c2[k]=ws>1e-6?(w0*c[q]+w1*c[q+1]+w2*c[q+NX]+w3*c[q+NX+1])/ws:c[k]}\n for(let y=1;y<NY-1;y++)for(let x=1;x<NX-1;x++){const k=y*NX+x;if(solid[k]){c[k]=0;continue}let sm=0,nn=0;\n  if(!solid[k-1]){sm+=c2[k-1];nn++}if(!solid[k+1]){sm+=c2[k+1];nn++}if(!solid[k-NX]){sm+=c2[k-NX];nn++}if(!solid[k+NX]){sm+=c2[k+NX];nn++}\n  c[k]=c2[k]+Dif*(sm-nn*c2[k])}\n for(let y=0;y<NY;y++)for(let x=0;x<3;x++){const k=y*NX+x;if(!solid[k])c[k]=Math.abs(y-cy)<1.6?1:0}};\n// ---- 收斂加速器（只影響過程，不改變穩態）----\n// 曲折流道的壓力要靠累積質量才建立，非常慢。每次呼叫：比較出口截面流量與入口流量 U·W，\n// 依比例縮放整個壓力擾動（ρ − 1）。當出口流量 = 入口流量時修正量為 0，最後的穩態就是原本 LBM 的解。\nSim.prototype.boost=function(){const{NX,NY,n,f,solid,rho}=this,x=NX-6;let q=0;for(let y=0;y<NY;y++){const k=y*NX+x;if(!solid[k])q+=this.ux[k]}\n const r=q/(this.U*this.W);this.rAvg=this.rAvg==null?r:.8*this.rAvg+.2*r;\n // 穩定流：依當下出口流量比修正；週期性擺動（壓力差振幅 > 0.5% 且遠大於漂移，排除初期的單調上升）時改用滑動平均、較小增益，才不會正負抵銷或過衝\n const st=this.stats(),osc=this.dpHist.length>=20&&st.amp>.005&&st.amp>3*st.drift,rr=osc?this.rAvg:r;if(!(r>.05)||Math.abs(rr-1)<.003)return 0;this.lastBoost=this.ns;\n const fac=osc?Math.min(1.05,Math.max(.97,1+.25*(1/rr-1))):Math.min(1.1,Math.max(.95,1+.5*(1/rr-1)));\n for(let k=0;k<n;k++){if(solid[k])continue;const dr=(rho[k]-1)*(fac-1);for(let i=0;i<9;i++)f[i*n+k]+=WT[i]*dr}return fac};\n// ---- 混合指標（反向追蹤）----\n// 穩態流場下，出口某點的染料濃度 = 從該點「逆著流動」並加上分子擴散隨機漫步、回到入口時落在藍色半邊的機率。\n// 出口截面每一格放 nw 個追蹤點反向追回入口，得到每格藍色比例 φ，M = 1 − 平均|φ − φ̄|／[2φ̄(1 − φ̄)]（0＝完全分層，1＝完全均勻）。\n// 沒有數值擴散；只適用於穩定流（非穩態時為近似）。Dm 為分子擴散係數（格子單位）。\nSim.prototype.mixRows=function(){const rows=[],xo=this.NX-4;for(let y=0;y<this.NY;y++)if(!this.solid[y*this.NX+xo])rows.push(y);return rows};\n// 亂數：mulberry32（精確 32 位元整數運算；舊版 LCG 的乘法超過 2^53 會失真，使 M 系統性偏低）\nfunction makeRng(seed){let a=(seed||7)>>>0;const rnd=()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296};\n return{rnd,gs:()=>Math.sqrt(-2*Math.log(rnd()||1e-12))*Math.cos(6.283185307*rnd())}}\n// 一個追蹤點：從出口 (x0,y0) 逆著流場＋擴散隨機漫步走回入口；回傳 1＝藍色半邊、0＝黃色半邊、−1＝超過步數上限（未解出）\n// 時間步依當地流速調整（dt = 0.5／|u|，限制在 1–64），每步移動約半格；慢速渦流區步長較大，才不會在封閉渦流裡耗上數十萬步。\n// 碰到牆時時間步減半重試（最多 4 次）。可傳入 st 物件分段續算（介面每幀只算一小段）。\nSim.prototype.walkBack=function(y0,Dm,R,st,budget){const{NX,NY,solid}=this,o=[0,0],o2=[0,0];if(!st.init){st.x=NX-4;st.y=y0-.3+.6*R.rnd();st.it=0;st.init=1}\n let x=st.x,y=st.y,it=st.it;const end=Math.min(MIXCAP,it+(budget||MIXCAP));\n while(x>1&&it<end){it++;this.vel(x,y,o);let dt=Math.max(1,Math.min(64,.5/(Math.hypot(o[0],o[1])+1e-9)));\n  for(let tr=0;tr<5;tr++){const sd=Math.sqrt(2*Dm*dt),mx=Math.max(0,Math.min(NX-1.01,x-o[0]*dt/2)),my=Math.max(0,Math.min(NY-1.01,y-o[1]*dt/2));this.vel(mx,my,o2);\n   let nx=x-o2[0]*dt+sd*R.gs(),ny=y-o2[1]*dt+sd*R.gs();if(nx>NX-1.01)nx=NX-1.01;if(nx<=0){x=0;break}if(ny>.5&&ny<NY-1.5&&!solid[Math.round(ny)*NX+Math.round(nx)]){x=nx;y=ny;break}dt/=2;if(tr<4)this.vel(x,y,o)}}\n st.x=x;st.y=y;st.it=it;if(x<=1)return y>this.cy?1:0;return it>=MIXCAP?-1:null};\nconst MIXCAP=400000;\n// 出口第 y0 列：nw 個追蹤點反向追回入口，回傳落在藍色半邊（y > 主通道中心）的比例\nSim.prototype.mixRow=function(y0,Dm,nw,seed,out){const R=makeRng(seed);let b=0,c=0,lost=0;for(let w=0;w<nw;w++){const v=this.walkBack(y0,Dm,R,{});if(v>=0){c++;b+=v}else lost++}if(out){out.lost=(out.lost||0)+lost;out.n=(out.n||0)+nw}return c?b/c:.5};\nfunction mixIndex(phi){const m=phi.reduce((a,v)=>a+v,0)/phi.length;let a=0;for(const v of phi)a+=Math.abs(v-m);return m>0&&m<1?Math.max(0,Math.min(1,1-a/phi.length/(2*m*(1-m)))):0}\nSim.prototype.mixBack=function(Dm,nw,seed){const out={},phi=this.mixRows().map((y,i)=>this.mixRow(y,Dm,nw,(seed||7)+i*977,out));return{M:mixIndex(phi),phi,lost:out.lost,n:out.n}};\n// ---- 渦流偵測（流場拓樸）----\n// 渦心＝速度為零、且周圍流體繞著它旋轉的點（臨界點中 det(∇u) > 0 的「中心點」）。在每個 2×2 格子內找 u、v 同時變號的點，\n// 用雙線性內插求出零點與速度梯度。回傳每個渦心的位置、旋向（ω 正負）與強度 |ω|。\nSim.prototype.vortices=function(){const{NX,NY,solid,ux,uy}=this,out=[];\n for(let y=1;y<NY-2;y++)for(let x=this.xa;x<this.xb;x++){const k=y*NX+x,K=[k,k+1,k+NX,k+NX+1];if(K.some(j=>solid[j]))continue;// 第十四版：只要求 2×2 格本身是流體（舊版排除所有貼牆格，窄流道裡貼著牆的交會渦流會被漏掉；網格加倍驗證反向確實有渦流）\n  const u=K.map(j=>ux[j]),v=K.map(j=>uy[j]);if(Math.min(...u)>0||Math.max(...u)<0||Math.min(...v)>0||Math.max(...v)<0)continue;\n  // 雙線性：f(s,t)=a+b s+c t+d s t；牛頓法找 u=v=0\n  const cf=q=>[q[0],q[1]-q[0],q[2]-q[0],q[0]-q[1]-q[2]+q[3]],A=cf(u),B=cf(v);let s=.5,t=.5,ok=false;\n  for(let i=0;i<12;i++){const fu=A[0]+A[1]*s+A[2]*t+A[3]*s*t,fv=B[0]+B[1]*s+B[2]*t+B[3]*s*t,us=A[1]+A[3]*t,ut=A[2]+A[3]*s,vs=B[1]+B[3]*t,vt=B[2]+B[3]*s,dt=us*vt-ut*vs;\n   if(Math.abs(dt)<1e-14)break;s-=(fu*vt-fv*ut)/dt;t-=(us*fv-vs*fu)/dt;if(Math.abs(fu)+Math.abs(fv)<1e-10){ok=true;break}}\n  if(!(s>=0&&s<=1&&t>=0&&t<=1))continue;const us=A[1]+A[3]*t,ut=A[2]+A[3]*s,vs=B[1]+B[3]*t,vt=B[2]+B[3]*s,det=us*vt-ut*vs,w=vs-ut;\n  if(det>0&&Math.abs(w)>.01*this.U/this.W*9)out.push({x:x+s,y:y+t,w})}\n // 合併 3 格內的重複渦心（保留較強者）\n out.sort((a,b)=>Math.abs(b.w)-Math.abs(a.w));const m=[];for(const v of out)if(!m.some(q=>Math.hypot(q.x-v.x,q.y-v.y)<3))m.push(v);return m};\n// 收斂判斷（所有關卡共用）：步數足夠、最近 1000 步加速器未動作、下游流量誤差 < 0.3%、壓力差漂移 < 0.1%、振幅 < 1%\nSim.prototype.settled=function(){const t=this.stats();return this.ns>3000&&this.ns-this.lastBoost>1000&&this.qErr(this.xb)<.003&&t.drift<.001&&t.amp<.01};\n// ===== 背景執行緒（Web Worker）：每個流道各用一個執行緒連續計算 LBM，主畫面只負責繪圖 =====\n// 主執行緒保留一份「鏡像」Sim（幾何、速度、密度、壓力紀錄），由這裡定期送回的快照更新。\n// gen：每次換幾何、換流動條件或載入快取都會加一；舊的快照一律丟棄，避免步數與壓力紀錄混到前一個條件。\nlet s=null,on=false,gen=0,dye=false,Dif=.01,low=false,busy=false;\nfunction load(m){s.f.set(m.f);s.ns=m.ns||0;s.dpHist=(m.dpHist||[]).slice();s.lastBoost=m.lastBoost||0;s.rAvg=m.rAvg==null?null:m.rAvg;s.dp=m.dp||0;s.macro()}\nonmessage=e=>{const m=e.data;\n if(m.cmd==='setup'){s=new Sim(m.NX,m.NY);s.solid.set(m.solid);s.prof.set(m.prof);Object.assign(s,{W:m.W,cy:m.cy,xa:m.xa,xb:m.xb,U:m.U,tau:m.tau});load(m);gen=m.gen;send()}\n else if(!s)return;\n else if(m.cmd==='flow'){s.U=m.U;s.tau=m.tau;if(m.reset){s.ns=0;s.dpHist=[];s.lastBoost=0;s.rAvg=null}gen=m.gen}\n else if(m.cmd==='setf'){s.U=m.U;s.tau=m.tau;load(m);gen=m.gen;send()}\n else if(m.cmd==='run'){on=m.on;dye=m.dye;Dif=m.Dif;low=m.low;if(m.dye0)s.c.fill(0);if(on&&!busy)loop()}\n else if(m.cmd==='getf')postMessage({t:'f',gen,key:m.key,f:s.f.slice(),ns:s.ns,dpHist:s.dpHist.slice(),lastBoost:s.lastBoost,rAvg:s.rAvg,dp:s.dp})};\nfunction loop(){if(!on||!s){busy=false;return}busy=true;const t0=performance.now();\n while(performance.now()-t0<14){for(let i=0;i<10;i++){s.step();if(s.ns%200===0&&s.ns<=30000)s.boost();if(dye)s.dye(1,Dif)}if(!isFinite(s.dp))break}\n send();setTimeout(loop,low?14:0)}\nfunction send(){const ux=s.ux.slice(),uy=s.uy.slice(),rho=s.rho.slice(),c=dye?s.c.slice():null,tr=[ux.buffer,uy.buffer,rho.buffer];if(c)tr.push(c.buffer);\n postMessage({t:'snap',gen,ns:s.ns,dp:s.dp,dpHist:s.dpHist.slice(),lastBoost:s.lastBoost,rAvg:s.rAvg,ux,uy,rho,c},tr)}";
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let renderer;
+try{renderer=new THREE.WebGLRenderer({canvas:$('#c'),antialias:true});if(!renderer.getContext())throw 0}catch(e){$('#err').style.display='flex';throw e}
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x04070f);scene.fog=new THREE.Fog(0x04070f,24,60);
+const camera=new THREE.PerspectiveCamera(45,1,.1,100);
+const amb=new THREE.AmbientLight(0x8aa0c8,.9);scene.add(amb);
+const l1=new THREE.PointLight(0x2de2ff,1.4,40);l1.position.set(-8,6,8);scene.add(l1);
+const l2=new THREE.PointLight(0x9b6bff,1.4,40);l2.position.set(8,-4,8);scene.add(l2);
+const grid=new THREE.GridHelper(80,80,0x1a3c66,0x0c1c34);grid.position.y=-5;scene.add(grid);
+{const g=new THREE.BufferGeometry(),p=new Float32Array(900);for(let i=0;i<900;i++)p[i]=(Math.random()-.5)*60;g.setAttribute('position',new THREE.BufferAttribute(p,3));scene.add(new THREE.Points(g,new THREE.PointsMaterial({size:.07,color:0x6f8fcf})))}
+const dotTex=(()=>{const c=document.createElement('canvas');c.width=c.height=32;const x=c.getContext('2d'),g=x.createRadialGradient(16,16,0,16,16,16);g.addColorStop(0,'#fff');g.addColorStop(.4,'rgba(255,255,255,.6)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,32,32);return new THREE.CanvasTexture(c)})();
+
+// ===== 共用常數與狀態 =====
+// 流動參數：固定 Re 時先用 U = 0.1 求 ν = U·W/Re；ν < NUMIN（τ 太接近 0.5）會不穩定，故為 Re 上限；ν > NUMAX 收斂太慢，改降低 U（低 Re 時水流真的變慢）。
+const UIN=.1,NUMIN=.0053,NUMAX=.05,CELL=.04,WALL=.22,DM=.0002,RE4=150;
+const S={lv:0,Re:30,dir:1,style:'stl',alpha:40,wm:8,g:7,n:4,len:26,Dif:.01,view:'vort',steps:8,paused:false,low:false,rm:matchMedia('(prefers-reduced-motion:reduce)').matches,U:UIN,ReE:30,tau:.55};
+const G={unlocked:new Set([1]),l1:new Map(),l1v:new Map(),l1Ask:false,l2:[],l2Quiz:[0,0],l2Ask:false,l3:{},l3Ask:false,l4:{segs:[],tests:[],testing:false},l4Ask:false};
+let sims=[],chips=[],tracers=[],mode='home';
+function flowFor(Re,W){let nu=Math.max(NUMIN,UIN*W/Re),U=UIN;if(nu>NUMAX){nu=NUMAX;U=Re*nu/W}return{nu,U,tau:3*nu+.5,Re:U*W/nu}}
+// 每個流道依自己的入口寬度 W 計算 U 與 ν（同一關的流道入口寬度相同，所以流量、Re 一致）
+function setFlow(){if(!sims.length)return;const Re=S.lv===4?RE4:S.Re,f=flowFor(Re,sims[0].W);S.U=f.U;S.ReE=f.Re;S.tau=f.tau;sims.forEach(s=>{const g=flowFor(Re,s.W);s.U=g.U;s.tau=g.tau;s.Re=g.Re});
+ $('#vRe').textContent=Math.round(S.ReE)+(S.ReE<S.Re-.5?'（此流道上限）':'');$('#vRe4').textContent=RE4}
+// 改 Re 等流動條件後：保留目前流場當起點，但清除步數與壓力紀錄，重新判斷收斂
+function resetConv(){sims.forEach(s=>{s.ns=0;s.dpHist=[];s.lastBoost=0;s.rAvg=null});G.mixJob=null;flowChanged();resumeAuto()}
+// 自動暫停：結果算出後再跑 5 秒就暫停模擬；改參數、換方向或重建流道時自動繼續
+let AP=null;
+function resumeAuto(){AP=null;if(S.autoP){S.autoP=false;S.paused=false;if(typeof ppUI==='function')ppUI()}}
+function resultReady(){const lv=S.lv;if(!sims.length)return false;if(lv===1)return settledAll();if(lv===2)return sims[0].settled();if(lv===3)return!!l3get(S.dir,Math.round(S.ReE))&&!G.mixJob;return false}
+function autoPause(now){if(mode!=='lab'||S.paused||!resultReady())return;const k=S.lv+'|'+sims.map(s=>s.gen).join(',');if(!AP||AP.k!==k)AP={k,t:now+HOLD};else if(!AP.f&&now>=AP.t){AP.f=true;S.paused=S.autoP=true;ppUI();toast('結果已算出，模擬已暫停；改參數或按「▶ 繼續」可再跑')}}
+
+// ===== 計算引擎：背景執行緒＋收斂結果快取 =====
+// 加速收斂的三個做法（都不改變物理模型與收斂標準）：
+// 1. 背景執行緒：每個流道一個 Web Worker 連續計算，不再受畫面更新（每幀 8 步）限制，主畫面只負責繪圖。
+// 2. 收斂結果快取：某個「流道＋方向＋流動條件」算到已趨穩後，把整個分布函數存起來；之後任何人再選同一個條件，直接載入（狀態顯示「之前算過」）。
+// 3. 暖機與就近起點：停在封面時，背景先把第一關常用的 Re 算好存進快取；換 Re 時若快取裡有更接近的 Re，就從那個流場開始算。
+// 網址加 ?sync 時改在主執行緒逐步計算（自動測試用，結果相同）。
+const SYNC=/[?&]sync/.test(location.search);let WK=[],GEN=0;const CACHE=new Map(),CMAX=40;
+try{if(!SYNC&&window.Worker&&window.Blob){const url=URL.createObjectURL(new Blob([LBM_SRC],{type:'text/javascript'}));WK=[0,1].map(()=>new Worker(url))}}catch(e){WK=[]}
+const useW=()=>WK.length===2;
+const ckey=s=>s.gkey+'|'+s.U.toFixed(5)+'|'+s.tau.toFixed(5);
+function cachePut(k,c){CACHE.delete(k);CACHE.set(k,c);while(CACHE.size>CMAX)CACHE.delete(CACHE.keys().next().value)}
+let wkAlive=false;
+WK.forEach(w=>{w.onmessage=e=>{wkAlive=true;const m=e.data,s=w.sim;if(!s||m.gen!==s.gen)return;
+ if(m.t==='snap'){if(G.mixJob)return;// 第三關計算出口混合時流場固定，不再更新
+  s.ux=m.ux;s.uy=m.uy;s.rho=m.rho;if(m.c)s.c=m.c;s.ns=m.ns;s.dp=m.dp;s.dpHist=m.dpHist;s.lastBoost=m.lastBoost;s.rAvg=m.rAvg}
+ else if(m.t==='f')cachePut(m.key,{f:m.f,ns:m.ns,dpHist:m.dpHist,lastBoost:m.lastBoost,rAvg:m.rAvg,dp:m.dp,Re:s.Re,gkey:s.gkey})};w.onerror=()=>{}});
+// 保險：若瀏覽器（或內嵌網頁的安全設定）擋下背景執行緒，4 秒內沒收到任何回傳就改回主執行緒計算
+setTimeout(()=>{if(WK.length&&!wkAlive){WK.forEach(w=>w.terminate());WK=[];attach(true)}},4000);
+const pack=s=>({NX:s.NX,NY:s.NY,solid:s.solid,prof:s.prof,W:s.W,cy:s.cy,xa:s.xa,xb:s.xb,U:s.U,tau:s.tau,gen:s.gen});
+// 把快取（或就近起點）的分布函數放進模擬：full＝完全相同的條件（連收斂紀錄一起載入）；否則只當起點，收斂紀錄歸零
+function useCache(s,c,full){s.f.set(c.f);s.macro();if(full){s.ns=c.ns;s.dpHist=c.dpHist.slice();s.lastBoost=c.lastBoost;s.rAvg=c.rAvg;s.dp=c.dp}else{s.ns=0;s.dpHist=[];s.lastBoost=0;s.rAvg=null}}
+// 新建流道後：交給背景執行緒（若快取有完全相同條件，直接載入）
+function nearest(s){let best=null;for(const e of CACHE.values())if(e.gkey===s.gkey&&(!best||Math.abs(e.Re-s.Re)<Math.abs(best.Re-s.Re)))best=e;return best}
+function attach(fresh){resumeAuto();sims.forEach((s,i)=>{s.gen=++GEN;s.stored=false;s.Re0=s.Re;const c=!fresh&&CACHE.get(ckey(s)),w=!fresh&&!c&&nearest(s);s.fromCache=!!c;if(c){useCache(s,c,true);s.stored=true}else if(w)useCache(s,w,false);
+ if(useW()){const k=WK[i];k.sim=s;k.postMessage(Object.assign(pack(s),{cmd:'setup'},c?{f:c.f,ns:c.ns,dpHist:c.dpHist,lastBoost:c.lastBoost,rAvg:c.rAvg,dp:c.dp}:{f:s.f,ns:0}))}});runKey=''}
+// 換了流動條件：完全相同條件的快取 → 直接載入；同一流道有更接近的 Re → 從那裡開始；否則沿用目前流場
+function flowChanged(){sims.forEach((s,i)=>{s.gen=++GEN;s.stored=false;const k=ckey(s),c=CACHE.get(k);let w=null;
+  if(!c){const best=nearest(s);if(best&&s.Re0!=null&&Math.abs(best.Re-s.Re)<Math.abs(s.Re0-s.Re))w=best}
+  s.fromCache=!!c;const src=c||w;if(src){useCache(s,src,!!c);s.stored=!!c}s.Re0=s.Re;
+  if(useW())WK[i].postMessage(src?Object.assign({cmd:'setf',U:s.U,tau:s.tau,gen:s.gen,f:src.f},c?{ns:c.ns,dpHist:c.dpHist,lastBoost:c.lastBoost,rAvg:c.rAvg,dp:c.dp}:{ns:0}):{cmd:'flow',U:s.U,tau:s.tau,reset:1,gen:s.gen})})}
+// 已趨穩的流場存進快取
+function cacheSettled(){for(const s of sims)if(!s.stored&&s.settled()){s.stored=true;if(useW())WK[sims.indexOf(s)].postMessage({cmd:'getf',key:ckey(s)});else cachePut(ckey(s),{f:s.f.slice(),ns:s.ns,dpHist:s.dpHist.slice(),lastBoost:s.lastBoost,rAvg:s.rAvg,dp:s.dp,Re:s.Re,gkey:s.gkey})}}
+// 背景執行緒的開關（暫停、第三關計算混合、第四關未測試時停止）
+let runKey='';
+function runState(run){if(!useW())return;const dye=mode==='lab'&&S.lv===2,k=[run,dye,S.Dif,S.low].join();if(k===runKey)return;runKey=k;sims.forEach((s,i)=>WK[i].postMessage({cmd:'run',on:run,dye,Dif:S.Dif,low:S.low}))}
+// 停在封面時的暖機：依序把第一關（也是第二關範本、第三關）常用的 Re 算好存進快取
+const PRE=[30,10,50,100,20,40,60,70,80,90,5,15,25,35,45,55,65,75,85,95];
+function prewarm(){return;// 第九版：關卡範本（主流拉直）與封面幾何不同，封面不再代算；拉直後收斂約 5000–7000 步
+ if(!useW()||mode!=='home'||sims.length!==2||!sims.every(s=>s.stored))return;
+ const W=sims[0].W,nx=PRE.find(r=>{const f=flowFor(r,W);return!sims.every(s=>CACHE.has(s.gkey+'|'+f.U.toFixed(5)+'|'+f.tau.toFixed(5)))});if(nx==null)return;
+ const f=flowFor(nx,W);sims.forEach(s=>{s.U=f.U;s.tau=f.tau;s.Re=f.Re});resetConv()}
+
+// ===== 晶片（顯示流道的平面）＋粒子 =====
+// 晶片＝地板（流場顏色貼圖，線性內插）＋牆面（流道遮罩平滑後用 marching squares 描出平滑輪廓，再擠出成立體牆）
+// 流道配色改為中性石墨灰：粒子（綠／橘）與染料（藍／黃）在上面都清楚可見
+const wallMat=new THREE.MeshLambertMaterial({color:0x4a4f58,emissive:0x101216,side:THREE.DoubleSide});
+const TF=2;// 地板貼圖倍率：流場顏色由模擬格點雙線性內插、粒子軌跡以 2 倍解析度繪製
+function mkChip(NX,NY,y,flip){const tex=new THREE.DataTexture(new Uint8Array(NX*NY*4*TF*TF),NX*TF,NY*TF,THREE.RGBAFormat);tex.minFilter=tex.magFilter=THREE.LinearFilter;
+ const W=NX*CELL,H=NY*CELL,fgeo=new THREE.PlaneGeometry(W,H),mat=new THREE.MeshLambertMaterial({map:tex,emissive:0xffffff,emissiveMap:tex,emissiveIntensity:.55,side:THREE.DoubleSide}),m=new THREE.Group();
+ m.add(new THREE.Mesh(fgeo,mat));let geo=new THREE.BufferGeometry();const wall=new THREE.Mesh(geo,wallMat);m.add(wall);
+ m.position.y=y;m.scale.x=flip?-1:1;scene.add(m);const lid=new THREE.Mesh(new THREE.PlaneGeometry(W,H),glass);lid.position.set(0,y,WALL+.03);scene.add(lid);
+ const lb=document.createElement('canvas');lb.width=640;lb.height=64;const lt=new THREE.CanvasTexture(lb),sp=new THREE.Sprite(new THREE.SpriteMaterial({map:lt,transparent:true}));sp.scale.set(6,.6,1);sp.position.set(-W/2+3.4,y+H/2+.42,0);scene.add(sp);
+ const c={NX,NY,m,tex,wall,lid,sp,lb,lt,W,H,trail:new Float32Array(NX*NY*3*TF*TF),base:new Float32Array(NX*NY*3),flip};
+ c.dispose=()=>{scene.remove(m,lid,sp);c.wall.geometry.dispose();fgeo.dispose();tex.dispose();mat.dispose();lt.dispose();sp.material.dispose();if(c.pts){m.remove(c.pts);c.pts.geometry.dispose();c.pts.material.dispose()}};return c}
+const glass=new THREE.MeshPhysicalMaterial({color:0xdfe6ee,transparent:true,opacity:.12,roughness:.05,depthWrite:false,side:THREE.DoubleSide});
+function label(c,t,col){const x=c.lb.getContext('2d');x.clearRect(0,0,640,64);x.font='bold 34px sans-serif';x.fillStyle=col;x.fillText(t,6,44);c.lt.needsUpdate=true}
+function heights(i){const c=chips[i],g=wallGeom(sims[i].solid,c.NX,c.NY,c.W,c.H);c.wall.geometry.dispose();c.wall.geometry=g}
+// 牆面幾何：3×3 平滑遮罩（外圍補一圈固體）→ marching squares 在 0.5 等值線描出輪廓（線性內插、次格點精度）→ 依巢狀層數組成「外框挖洞＋島」→ 擠出高度 WALL
+// 平滑輪廓：3×3 平滑遮罩（外圍補一圈固體）→ marching squares 在 0.5 等值線描出閉合輪廓（線性內插、次格點精度）；回傳格點座標（格中心為整數＋0.5 前的索引）
+function contours(sol,NX,NY){const GX=NX+2,GY=NY+2,v=new Float32Array(GX*GY).fill(1),at=(x,y)=>x<0||y<0||x>=NX||y>=NY?1:sol[y*NX+x];
+ for(let y=0;y<NY;y++)for(let x=0;x<NX;x++){let a=0;for(let j=-1;j<=1;j++)for(let k=-1;k<=1;k++){const X=Math.min(NX-1,Math.max(0,x+k));a+=at(X,y+j)*(j||k?(j&&k?1:2):4)}v[(y+1)*GX+x+1]=a/16}
+ const V=(i,j)=>v[j*GX+i],P={},adj={},add=(a,b)=>{(adj[a]=adj[a]||[]).push(b);(adj[b]=adj[b]||[]).push(a)};
+ const eH=(i,j)=>{const k='h'+i+','+j;if(!P[k]){const a=V(i,j),b=V(i+1,j);P[k]=[i+(.5-a)/(b-a),j]}return k},eV=(i,j)=>{const k='v'+i+','+j;if(!P[k]){const a=V(i,j),b=V(i,j+1);P[k]=[i,j+(.5-a)/(b-a)]}return k};
+ for(let j=0;j<GY-1;j++)for(let i=0;i<GX-1;i++){const c=(V(i,j)>.5?1:0)|(V(i+1,j)>.5?2:0)|(V(i+1,j+1)>.5?4:0)|(V(i,j+1)>.5?8:0);if(c===0||c===15)continue;
+  const e=[()=>eH(i,j),()=>eV(i+1,j),()=>eH(i,j+1),()=>eV(i,j)],L=(a,b)=>add(e[a](),e[b]()),ctr=(V(i,j)+V(i+1,j)+V(i+1,j+1)+V(i,j+1))/4>.5;
+  switch(c){case 1:case 14:L(3,0);break;case 2:case 13:L(0,1);break;case 3:case 12:L(3,1);break;case 4:case 11:L(1,2);break;case 6:case 9:L(0,2);break;case 7:case 8:L(2,3);break;
+   case 5:if(ctr){L(0,1);L(2,3)}else{L(3,0);L(1,2)}break;case 10:if(ctr){L(3,0);L(1,2)}else{L(0,1);L(2,3)}break}}
+ const seen=new Set(),loops=[];
+ for(const k0 in adj){if(seen.has(k0))continue;const lp=[];let prev=null,k=k0;while(k&&!seen.has(k)){seen.add(k);lp.push([P[k][0]-1,P[k][1]-1]);const nb=adj[k].find(n=>n!==prev&&!seen.has(n));prev=k;k=nb}if(lp.length>2)loops.push(lp)}
+ return loops}
+// 牆面幾何：輪廓依巢狀層數組成「外框挖洞＋島」→ 擠出高度 WALL
+// 第十四版：牆面輪廓先做高斯平滑（σ ≈ 0.8 格）再以 3 倍解析度取 0.5 等值線，轉角與迴圈更圓順；直牆位置不變，與模擬格點差距 < 0.5 格（只影響顯示）
+function smoothUp(sol,NX,NY,f){const B=new Float32Array(NX*NY),T=new Float32Array(NX*NY),at=(x,y)=>sol[Math.min(NY-1,Math.max(0,y))*NX+Math.min(NX-1,Math.max(0,x))];
+ const g=[.06,.24,.4,.24,.06];for(let y=0;y<NY;y++)for(let x=0;x<NX;x++){let a=0;for(let i=-2;i<=2;i++)a+=g[i+2]*at(x+i,y);T[y*NX+x]=a}
+ for(let y=0;y<NY;y++)for(let x=0;x<NX;x++){let a=0;for(let i=-2;i<=2;i++)a+=g[i+2]*T[Math.min(NY-1,Math.max(0,y+i))*NX+x];B[y*NX+x]=a}
+ const FX=NX*f,FY=NY*f,o=new Uint8Array(FX*FY);for(let j=0;j<FY;j++){const v=Math.min(NY-1.001,Math.max(0,(j+.5)/f-.5)),y0=v|0,fy=v-y0;for(let i=0;i<FX;i++){const u=Math.min(NX-1.001,Math.max(0,(i+.5)/f-.5)),x0=u|0,fx=u-x0,q=y0*NX+x0;
+  o[j*FX+i]=(B[q]*(1-fx)*(1-fy)+B[q+1]*fx*(1-fy)+B[q+NX]*(1-fx)*fy+B[q+NX+1]*fx*fy)>.5?1:0}}return o}
+function wallGeom(sol,NX,NY,W,H){const F=3,fine=smoothUp(sol,NX,NY,F),loops=contours(fine,NX*F,NY*F).map(l=>l.map(p=>new THREE.Vector2((p[0]+.5)/F*CELL-W/2,(p[1]+.5)/F*CELL-H/2)));
+ const inside=(p,poly)=>{let c=false;for(let a=0,b=poly.length-1;a<poly.length;b=a++){const A=poly[a],B=poly[b];if((A.y>p.y)!==(B.y>p.y)&&p.x<(B.x-A.x)*(p.y-A.y)/(B.y-A.y)+A.x)c=!c}return c};
+ const depth=loops.map((l,a)=>loops.reduce((n,m,b)=>n+(a!==b&&inside(l[0],m)?1:0),0)),e2=.03,outer=new THREE.Shape([new THREE.Vector2(-W/2-e2,-H/2-e2),new THREE.Vector2(W/2+e2,-H/2-e2),new THREE.Vector2(W/2+e2,H/2+e2),new THREE.Vector2(-W/2-e2,H/2+e2)]),shapes=[outer];
+ loops.forEach((l,a)=>{if(depth[a]%2===0)outer.holes.push(new THREE.Path(l))});
+ loops.forEach((l,a)=>{if(depth[a]%2===1){const sh=new THREE.Shape(l);loops.forEach((m,b)=>{if(depth[b]===depth[a]+1&&inside(m[0],l))sh.holes.push(new THREE.Path(m))});shapes.push(sh)}});
+ return new THREE.ExtrudeGeometry(shapes,{depth:WALL,bevelEnabled:false,curveSegments:1})}
+// 示蹤粒子：位置由模擬流場推動（中點法）。dye 模式另加分子擴散隨機漫步（與第三關混合指標用的擴散係數相同）。
+function Tracer(s,c,n,kind){this.s=s;this.c=c;this.n=n;this.kind=kind;this.x=new Float32Array(n);this.y=new Float32Array(n);this.col=new Uint8Array(n);this.age=new Float32Array(n);if(kind==='dye')this.cv=new Float32Array(n);
+ const pos=new Float32Array(n*3),cl=new Float32Array(n*3),g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setAttribute('color',new THREE.BufferAttribute(cl,3));
+ this.pts=new THREE.Points(g,new THREE.PointsMaterial({size:kind==='dye'?.09:.11,map:dotTex,vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));this.pts.frustumCulled=false;c.m.add(this.pts);c.pts=this.pts;
+ for(let j=0;j<n;j++){this.spawn(j);this.x[j]=Math.random()*s.NX*.95}this.o=[0,0];this.o2=[0,0]}
+// 粒子由入口放入，位置依入口拋物線流速分布抽樣（流量大的中央放得多）：粒子密度代表流量，而不是平均灑在入口
+Tracer.prototype.spawn=function(j){const s=this.s;let e;do{e=Math.random()*2-1}while(Math.random()>1-e*e);this.x[j]=Math.random()*2;this.y[j]=s.cy+e*(s.W/2-.3);this.col[j]=this.y[j]>s.cy?1:0;if(this.cv)this.cv[j]=this.col[j];this.age[j]=0};
+// 第三關：每個粒子記得自己來自藍色（1）或黃色（0）入口；顯示的顏色＝它附近（沿流向 14 格 × 橫向 2 格的小區）藍色粒子的比例。
+// 兩色粒子被流場帶到一起、再靠分子擴散的隨機漫步交錯時，那一區就變成綠色；沒有碰到另一色的地方維持原色。
+// 這和混合指標 M 用的是同一個物理（流動＋分子擴散），只是改成順著流動看。顯示值每幀平滑一次，避免閃爍。
+Tracer.prototype.mixColor=function(){const s=this.s,BX=14,BY=2,nx=Math.ceil(s.NX/BX),ny=Math.ceil(s.NY/BY),nb=new Float32Array(nx*ny),nt=new Float32Array(nx*ny),key=new Int32Array(this.n);
+ for(let j=0;j<this.n;j++){const k=Math.min(ny-1,Math.max(0,(this.y[j]/BY)|0))*nx+Math.min(nx-1,Math.max(0,(this.x[j]/BX)|0));key[j]=k;nt[k]++;nb[k]+=this.col[j]}
+ for(let j=0;j<this.n;j++){const k=key[j],f=nt[k]>1?nb[k]/nt[k]:this.col[j];this.cv[j]+=(f-this.cv[j])*.12}};
+Tracer.prototype.update=function(dt){const s=this.s,{NX,NY}=s,o=this.o,o2=this.o2,sub=Math.max(1,Math.ceil(dt/4)),h=dt/sub,sd=this.kind==='dye'?Math.sqrt(2*DM*h):0;
+ for(let j=0;j<this.n;j++){let x=this.x[j],y=this.y[j];
+  for(let q=0;q<sub;q++){s.vel(x,y,o);const mx=Math.min(NX-1.01,Math.max(0,x+o[0]*h/2)),my=Math.min(NY-1.01,Math.max(0,y+o[1]*h/2));s.vel(mx,my,o2);
+   let nx=x+o2[0]*h,ny=y+o2[1]*h;if(sd){const u=Math.random()||1e-9,v=Math.random(),r=Math.sqrt(-2*Math.log(u));nx+=sd*r*Math.cos(6.2832*v);ny+=sd*r*Math.sin(6.2832*v)}
+   if(nx>=NX-1.5){x=NX;break}if(ny>.5&&ny<NY-1.5&&nx>=0&&!s.solid[Math.round(ny)*NX+Math.round(nx)]){x=nx;y=ny}}
+  this.age[j]+=dt;if(x>=NX-1.5||this.age[j]>60000||(this.age[j]>4000&&Math.random()<.0004)){this.spawn(j);continue}this.x[j]=x;this.y[j]=y}};
+Tracer.prototype.draw=function(rgb){const c=this.c,p=this.pts.geometry.attributes.position.array,cl=this.pts.geometry.attributes.color.array,T=c.trail,{NX,NY}=c;
+ for(let j=0;j<this.n;j++){const x=this.x[j],y=this.y[j];p[j*3]=(x+.5)*CELL-c.W/2;p[j*3+1]=(y+.5)*CELL-c.H/2;p[j*3+2]=.12;
+  const k=Math.round((y+.5)*TF-.5)*NX*TF+Math.round((x+.5)*TF-.5),inT=k>=0&&k<NX*NY*TF*TF;
+  if(this.kind==='dye'){const v=this.cv[j],col=v<.5?mix3(YE,[.3,.95,.4],v*2):mix3([.3,.95,.4],BL,(v-.5)*2);cl[j*3]=col[0];cl[j*3+1]=col[1];cl[j*3+2]=col[2];if(inT){T[k*3]+=.5*v;T[k*3+1]+=.5*(1-v)}}
+  else{// 亮度依當地流速：流得快的主要路徑亮、幾乎不流的死角暗（粒子在慢速渦流裡停留久，不加權會讓死角看起來很熱鬧）
+   this.s.vel(Math.min(this.s.NX-1.01,Math.max(0,x)),Math.min(this.s.NY-1.01,Math.max(0,y)),this.o);let f=Math.min(1.3,Math.max(.12,Math.hypot(this.o[0],this.o[1])/(1.2*this.s.U))),col=rgb(this.col[j]);
+   // 第四關：正在支流（迴圈）裡的粒子改成金色並加亮，反向時水被導進支流的情形一眼就看得出來
+   if(S.lv===4&&Math.abs(y-this.s.cy)>this.s.W/2+1.5){col=GOLD;f=Math.max(f,.9)}
+   cl[j*3]=col[0]*f;cl[j*3+1]=col[1]*f;cl[j*3+2]=col[2]*f;if(inT){T[k*3]+=col[0]*.5*f;T[k*3+1]+=col[1]*.5*f;T[k*3+2]+=col[2]*.5*f}}}
+ this.pts.geometry.attributes.position.needsUpdate=true;this.pts.geometry.attributes.color.needsUpdate=true};
+// FW＝正向粒子（亮綠）、OR＝反向粒子（橘）；BL／YE＝第三關藍、黃染料；BC／GC／YC＝染料軌跡與出口色條
+// 第八版方向定義（依使用者提供的參考圖）：正向＝藍色、水由右往左；反向＝紅色、水由左往右。CY／OR 只留給封面與結論動畫（不修改）。
+const FWD=[.3,.62,1],REV=[1,.3,.28],GOLD=[1,.84,.25],FWC='#5aa8ff',REVC='#ff5a5a',CY=[.45,1,.35],OR=[1,.6,.18],BL=[.3,.58,1],YE=[1,.88,.12],BC=[70,140,255],GC=[60,210,100],YC=[255,222,30],mix3=(A,B,t)=>[A[0]+(B[0]-A[0])*t,A[1]+(B[1]-A[1])*t,A[2]+(B[2]-A[2])*t];
+function clearScene(){tracers=[];chips.forEach(c=>c.dispose());chips=[]}
+
+// ===== 各關卡的流道與晶片 =====
+// 第一、二、三關的範本：封面 STL 模型的俯視截面（400×64）。第四關：使用者組合的水滴形島單節模組（480×64）。
+// 範本（封面 STL 截面）的方向：模擬程式的入口一律在格點左端（x = 0）。
+// 正向（右→左）＝把流道左右鏡像後由左端流入，晶片再左右翻轉顯示，看起來仍是封面的同一個流道、水由右往左流；
+// 反向（左→右）＝原始流道直接由左端流入。兩個方向用的是同一個實體幾何，只差流動方向（tests/sanity.js 以對稱幾何驗證鏡像等價）。
+// 第九版：第一～三關的範本把主流拉直（沿中心線挖 5 格寬的直通道，MAIN5）；封面與結論仍用原始截面
+const MAIN5=5;
+// 第十一版：第一～三關的特斯拉閥改為依使用者參考圖繪製的經典特斯拉閥（refGeom；與 tests/d_ref.js 的 REFP 相同）。MAIN5（主流拉直版）已不使用。
+const REFP={ref:1,W:7,g:6,A:7,phi:28,n:9,Lb:12,R:7};
+function stlSims(dirs,straight0){return dirs.map((d,i)=>{const s=new Sim(400,64);s.geom(straight0&&i===0?{stl:1,straight:true}:REFP,d>0);return s})}
+// 第三關（第十二版）：與第一、二關相同的參考圖特斯拉閥（正向＝鏡像幾何、晶片翻轉）。直管對照組的寬度與特斯拉閥入口相同（W 相同 → 同 U、同 ν、同流量、同 Re）。
+function l3Sims(dir){return[0,1].map(i=>{const s=new Sim(400,64);if(i===0)s.geom({wm:REFP.W},false);else s.geom(REFP,dir>0);return s})}
+function build(lv,fresh){clearScene();S.lv=lv;G.mixJob=null;const H=64*CELL;
+ if(lv===1){sims=stlSims([1,-1]);chips=[mkChip(400,64,H/2+.7,true),mkChip(400,64,-H/2-.7,false)];label(chips[0],'正向 ←　水從右邊流入（藍）',FWC);label(chips[1],'反向 →　水從左邊流入（紅）',REVC);
+  tracers=[new Tracer(sims[0],chips[0],1100,'path'),new Tracer(sims[1],chips[1],1100,'path')]}
+ else if(lv===2){sims=[geom2()];chips=[mkChip(sims[0].NX,64,0,S.dir>0)];label(chips[0],(S.dir>0?'正向 ←（藍）':'反向 →（紅）')+'　'+{stl:'參考圖特斯拉閥',classic:'經典單側迴圈',dual:'雙側交錯'}[S.style],S.dir>0?FWC:REVC)}
+ else if(lv===3){sims=l3Sims(S.dir);const f=S.dir>0;chips=[mkChip(400,64,H/2+.7,f),mkChip(400,64,-H/2-.7,f)];const d=S.dir>0?'正向 ←（右→左）':'反向 →（左→右）',dc=S.dir>0?FWC:REVC;
+  label(chips[0],'直管（對照組）　'+d,dc);label(chips[1],'特斯拉閥（參考圖）　'+d,dc);tracers=[new Tracer(sims[0],chips[0],2600,'dye'),new Tracer(sims[1],chips[1],2600,'dye')]}
+ else if(lv===4){sims=segSims();const nx=sims[0].NX;chips=[mkChip(nx,64,H/2+.7,true),mkChip(nx,64,-H/2-.7,false)];label(chips[0],'正向 ←　水從右邊流入（藍）',FWC);label(chips[1],'反向 →　水從左邊流入（紅）',REVC);
+  if(G.l4.testing)tracers=[new Tracer(sims[0],chips[0],1600,'path'),new Tracer(sims[1],chips[1],1600,'path')]}
+
+ setFlow();sims.forEach(s=>s.init());sims.forEach((s,i)=>heights(i));glass.opacity=+$('#lid').value;attach(fresh)}
+// 第二關：範本樣式同 stlSims（正向鏡像）；參數式樣式同第四關（反向＝島尖端在左，水由左往右時以淺角進入迴圈，符合參考圖）
+function geom2(){if(S.style==='stl'){const s=new Sim(400,64);s.geom(REFP,S.dir>0);return s}
+ const n=S.n,NX=400,pitch=S.style==='classic'?Math.floor((NX-90)/n):Math.floor((NX-90)/(n+.5)),s=new Sim(NX,64);
+ s.geom({segs:Array(n).fill(S.alpha),one:S.style==='classic',wm:S.wm,g:S.g,L:S.len,pitch,x0:30},S.dir<0);return s}
+// 第四關模組（第四版的水滴形島＋迴圈，第六版起固定 Re = 150）：主通道寬 8、迴圈寬 7、島長 26、節距 30；格點 480×64（與 tests/d_seg.js 相同）
+function segSims(){const segs=G.l4.segs.length?G.l4.segs:[],pitch=30,x0=Math.round((480-(segs.length+1)*pitch)/2)-6;
+// 正向（藍，右→左）：未鏡像幾何由格點左端流入＝先經過圓鈍端，晶片翻轉顯示；反向（紅，左→右）：鏡像幾何（顯示方向不翻轉）＝水先遇到島尖端，以淺角進入迴圈，繞過圓鈍端後衝回主流（參考圖紅色箭頭）
+ return[1,-1].map(d=>{const s=new Sim(480,64);if(segs.length)s.geom({segs,wm:8,g:7,L:26,pitch,x0},d<0);else s.geom({wm:8},false);return s})}
+
+// ===== 繪製 =====
+function paint(i){const s=sims[i],c=chips[i],d=c.tex.image.data,{ux,uy,rho,c:dye,solid,NX,NY}=s,T=c.trail,B=c.base,lv=S.lv,U=s.U,m=S.view;
+ const dec=lv===3?.965:.9,ps=(()=>{let a=0,n=0;for(let y=0;y<NY;y++)if(!solid[y*NX+1]){a+=rho[y*NX+1];n++}return Math.max(1e-5,(a/n-1)/3)})();
+ // 第一步：模擬格點的底色
+ for(let k=0;k<NX*NY;k++){let r,g,b;
+  if(solid[k]){r=14;g=15;b=18}
+  else if(lv===2){if(m==='dye'){const q=Math.min(1,Math.max(0,dye[k]));r=34+(255-34)*q;g=36+(170-36)*q;b=42+(30-42)*q}
+   else if(m==='vort'){const w=k>NX&&k<NX*NY-NX-1?s.vort(k):0,q=Math.max(-1,Math.min(1,w/(U/s.W*3)));r=24+231*Math.max(q,0);b=40+215*Math.max(-q,0);g=34+90*(1-Math.abs(q))}
+   else{const v=m==='speed'?Math.min(1,Math.hypot(ux[k],uy[k])/(2.2*U)):Math.max(0,Math.min(1,(rho[k]-1)/3/ps));r=30+225*Math.sqrt(v);g=30+200*v;b=40+30*v*(1-v)}}
+  else{const v=Math.min(1,Math.hypot(ux[k],uy[k])/(2*U));r=30+46*v;g=32+48*v;b=36+50*v;
+   // 回流區（水往主流反方向走的地方）用紫色標出：反向時迴圈把水導回主通道，回流區明顯變多
+   if(lv!==3){const bk=Math.min(1,Math.max(0,-ux[k]/(.25*U)))*.75;r+=(150-r)*bk;g+=(70-g)*bk;b+=(210-b)*bk}}
+  B[k*3]=r;B[k*3+1]=g;B[k*3+2]=b}
+ // 第二步：2 倍解析度——底色雙線性內插＋粒子軌跡
+ const X2=NX*TF,Y2=NY*TF;
+ for(let Y=0;Y<Y2;Y++){const fy=Math.max(0,Math.min(NY-1.001,(Y+.5)/TF-.5)),y0=fy|0,v=fy-y0;
+  for(let X=0;X<X2;X++){const fx=Math.max(0,Math.min(NX-1.001,(X+.5)/TF-.5)),x0=fx|0,u=fx-x0,k=y0*NX+x0,w00=(1-u)*(1-v),w10=u*(1-v),w01=(1-u)*v,w11=u*v,K=Y*X2+X,o=K*4;
+   let r=B[k*3]*w00+B[k*3+3]*w10+B[(k+NX)*3]*w01+B[(k+NX)*3+3]*w11,g=B[k*3+1]*w00+B[k*3+4]*w10+B[(k+NX)*3+1]*w01+B[(k+NX)*3+4]*w11,b=B[k*3+2]*w00+B[k*3+5]*w10+B[(k+NX)*3+2]*w01+B[(k+NX)*3+5]*w11;
+   if(lv!==2){const a=T[K*3],e=T[K*3+1],f=T[K*3+2];
+    if(lv===3){const s2=a+e;if(s2>.02){const w=Math.min(1,s2*.9),p=a/s2,C=p<.5?mix3(YC,GC,p*2):mix3(GC,BC,(p-.5)*2);r=r*(1-w)+C[0]*w;g=g*(1-w)+C[1]*w;b=b*(1-w)+C[2]*w}}
+    else{r=Math.min(255,r+255*a);g=Math.min(255,g+255*e);b=Math.min(255,b+255*f)}T[K*3]*=dec;T[K*3+1]*=dec;T[K*3+2]*=dec}
+   d[o]=r;d[o+1]=g;d[o+2]=b;d[o+3]=255}}
+ // 渦心標記：雙圈（半徑 3 與 3.5 格），比單線圈更醒目
+ if(G.vv&&G.vv[i])for(const v of G.vv[i])for(const rr of[3,3.5])for(let a=0;a<64;a++){const t=a/64*6.2832,X=Math.round((v.x+.5+rr*Math.cos(t))*TF-.5),Y=Math.round((v.y+.5+rr*Math.sin(t))*TF-.5);if(X>=0&&X<X2&&Y>=0&&Y<Y2){const o=(Y*X2+X)*4;d[o]=255;d[o+1]=255;d[o+2]=210}}
+ c.tex.needsUpdate=true}
+
+// ===== 關卡內容 =====
+const LVN=['','I 水流大對決','II 渦流現形記','III 驗血晶片的混色魔術','IV 設計你的特斯拉閥','結論'];
+const TXT={
+1:{g:'在「相同流量」下，比較同一個特斯拉閥正向（藍，右→左）和反向（紅，左→右）哪一邊需要較大的壓力差，並看雷諾數 Re 會怎麼改變這個差異。',
+ s:['看上下兩個一模一樣的特斯拉閥：上面是正向（藍色粒子，水從右邊流入、往左流），下面是反向（紅色粒子，水從左邊流入、往右流）。粒子越亮代表那裡水流得越快；紫色區域是「回流區」——水在那裡往回走、打轉。','拖動「雷諾數」，等右邊狀態變成「已趨穩」（通常幾秒），電腦會自動記下這個 Re 的 D，壓力計會顯示哪一個方向需要較大的壓力差。','至少比較 3 種 Re（建議 10、50、100），看看 D 怎麼變；D 離 1 越遠，正反兩方向的差別越大。'],
+ p:'連續方程式：Q = Av（體積流量＝截面積×平均流速；不可壓縮、穩定流）。流道一下寬一下窄，水的速度就跟著一直改變。<br>理想 Bernoulli：P + ½ρv² + ρgh ＝ 定值（無黏滯、沿同一流線）；真實流動還有 ΔP<sub>loss</sub>：黏滯、剪切與渦流把機械能變成內能。<br>Diodicity：D = ΔP<sub>反向</sub>／ΔP<sub>正向</sub>（相同流量）。D = 1 沒有整流效果；D > 1 反向需要較大壓力差；D < 1 則是正向需要較大壓力差。<br>雷諾數 Re = ρvD／μ = vD／ν ＝ 慣性效應／黏滯效應（ν＝運動黏度）。本模擬改變 Re 的方式：運動黏度 ν 有上限 0.05（格子單位），所以 Re < 2W（W＝入口寬度格數，第一～三關 W＝6，即 Re < 12）時改變入口平均流速 U、ν 固定；Re ≥ 2W 時 U 固定、改變運動黏度 ν（相當於換成較稀的液體）。切換點依入口寬度決定。兩種做法對無因次流場的效果相同，所以 Re 不等於「推水快慢」本身。Re 很小時（黏滯流）流動可逆，D ≈ 1；方向性來自慣性（Navier–Stokes 方程中的非線性對流項 (v·∇)v）。'},
+2:{g:'把看不見的旋渦變成看得見：找出特斯拉閥裡的渦心在哪裡、偵測到幾個，以及雷諾數、方向和流道形狀怎麼改變它們。',
+ s:['先按「Re=10」，再按「Re=150」，比較渦度圖（紅、藍代表相反的旋轉方向；這裡的紅、藍是渦度，不是流動方向）。','等狀態穩定後，電腦會自動記錄這次的渦流（右邊「紀錄表」可展開查看）：白色小圓圈是電腦找到的渦心（水繞著轉的中心）。','換方向、Re 或流道樣式，至少記錄 3 種不同條件，再回答下方 2 題。'],
+ p:'雷諾數 Re = ρvD／μ ＝ 慣性效應／黏滯效應。Re 小：黏滯力主導，流動平滑、規則；Re 變大：慣性增加，水在分支與急彎處無法貼著牆轉彎，發生流動分離（flow separation），形成回流區與渦流（vortex）。Re 變大不代表立刻變成紊流。<br>三個不同的概念：渦度（vorticity）ω = ∂v/∂x − ∂u/∂y 是每一點的局部旋轉量，貼著牆的剪切層也有很大的渦度；渦心（vortex center）是速度為零、周圍的水繞著它旋轉的點，畫面上的白圈就是電腦偵測到的渦心；紊流（turbulence）是不規則、隨機變動的流動——本模擬 Re ≤ 150 是層流（Re > 100 時可能出現規則的週期擺動），不是紊流。<br>偵測到的渦心數會隨 Re 變化，但不保證 Re 越大就一定越多，請以模擬結果為準。<br>渦流→複雜速度梯度→剪切→黏滯耗散→ΔP<sub>loss</sub> 增加。渦流不是讓水停住，而是讓更多機械能變成內能。'},
+3:{g:'藍、黃兩股水同時流入，比較直管、特斯拉閥正向、特斯拉閥反向，出口顏色混得多均勻——這就是驗血晶片裡的「被動式混合」。',
+ s:['先看「正向」（右→左）：上面是直管（對照組，寬度與特斯拉閥入口相同），下面是和第一、二關相同的特斯拉閥。藍、黃粒子（染料顏色，和流動方向的顏色無關）各從入口的上、下半邊流入。','等狀態「已趨穩」，電腦會算出口的混合指標 M 和出口色條（越接近綠色越均勻）。','按「反向 →」再看一次。直管、正向、反向都看完，就可以前往第四關。'],
+ p:'微流道裡多為層流：兩股水並排前進，沒有攪拌時只能靠分子擴散慢慢混合，所以直管出口還分得出藍、黃。<br>在特斯拉閥裡，如果水在岔口被迫急轉彎、迴圈裡形成渦流（流場重組），兩色會被捲在一起、接觸面拉長，擴散距離變短，混合就快很多；如果水順順地分成幾股再合流，兩色大多保持並排，效果接近直管。哪一個方向屬於哪一種，請看實際算出的 M——不要先假設反向一定混得比較好。<br>混合指標 M = 1 − 平均|φ − φ̄|／[2φ̄(1 − φ̄)]（φ：出口每一格的藍色比例；0＝完全分層、1＝完全均勻）。應用：微流體晶片（Lab-on-a-Chip）。'},
+4:{g:'當一次工程師：用 20°–60° 的單節模組組出自己的特斯拉閥，在相同雷諾數下測試正反向的阻力差 D，體驗「假設—設計—測試—驗證」。',
+ s:['先猜：哪種角度、幾節，D 會最大？（正向＝藍，水由右往左；反向＝紅，水由左往右，先遇到島的尖端、以淺角進入迴圈）','點下方的角度按鈕加入單節模組（最多 12 節，會上下交錯排列），然後按「▶ 測試」。','改變角度或節數再測一次，至少比較 2 種組合，看結果和你的猜測一樣嗎？測試時，金色粒子代表正在流經支流（迴圈）的水——比一比正向和反向哪一邊的金色比較多。'],
+ p:'分流角 θ：水進入側邊迴圈的角度（島外緣與主通道的夾角）。企劃書的假說：約 45°–55° 最好——太小水容易滑進去但撞擊不夠，太大（接近 90°）水因慣性直接衝過主通道。<br>回流角：水從迴圈出來撞回主流的角度。企劃書認為越接近 180°（正面交會）越好：相反方向的動量在交會處部分抵銷，機械能再經黏滯作用耗散成內能。但實際耗散多少還取決於雷諾數與整體幾何，不一定角度越接近 180° 就越大。<br>ΔP<sub>loss</sub> = K(Re, 幾何) · ½ρv²：阻力係數 K 同時取決於雷諾數與幾何參數 G = {L, w, θ, R, …}。D = ΔP<sub>反向</sub>／ΔP<sub>正向</sub>。<br>注意：為了維持水滴形，θ 改變時圓鈍端半徑 R 也會跟著變（R = r + ℓ·tan(θ/2)，有上限）。'}};
+const MODEL={1:'模型：二維格子波茲曼法（D2Q9、He–Luo 不可壓縮、TRT 碰撞，τ<0.6 加 Smagorinsky 渦黏性以維持穩定）。第一、二關的特斯拉閥依使用者提供的參考圖繪製（第十一版）：主通道是與水平夾 28° 的直線折線（寬 7 格），9 個轉折點外側各接一個「P」形迴圈——反向（紅，左→右）時迴圈入口沿來流方向直線延伸 12 格，半圓迴轉（中心線半徑 7 格）後以約 124° 衝回下游主通道；正向（藍，右→左）時迴圈接口朝後，水大多走主通道。頭尾兩段為半個節距，使 9 個迴圈形狀完全相同；格點化後寬度不到 3 格的牆尖以形態學開運算修圓，避免鋸齒狀突刺干擾渦流（第十三版）。格點 400×64。入口 Zou–He 速度邊界使兩方向流量完全相同。壓力差以格子單位顯示（不是 Pa），結果為二維模擬輸出，不是量測值。驗證（tests/d_ref.js）：D = 1.001（Re 5）、0.999（10）、1.007（30）、1.070（60）、1.139（100）、1.152（150），皆為穩定流；網格加倍（800×128）Re 100 D = 1.170（同號，差 3%）。封面模型（3D 列印的 STL）與關卡流道不同。',
+ 2:'模型同第一關（參考圖特斯拉閥）。渦心以流場拓樸（速度為零且 det∇u > 0 的點）自動偵測。染料為歐拉法（含數值擴散），只用來看流動。第十四版修正渦心偵測：舊版排除所有貼著牆的格子，窄流道裡貼牆的交會渦流會被漏掉（反向只找到 1 個，但網格加倍時有 9 個）；現在只要求 2×2 格本身是流體。偵測到的渦心數（Re 100）：正向 15、反向 10；Re 30：9／0；Re 10：0／0。正向的渦心多半是迴圈裡幾乎不流、慢慢打轉的渦流；反向的渦心多半在支流衝回主流的交會處。渦心數多的方向不一定是壓力差較大的方向。',
+ 3:'混合指標以「反向追蹤」計算：從出口每一格放 200 個追蹤點，逆著流場並加上分子擴散的隨機漫步追回入口，看它來自藍色或黃色半邊；沒有數值擴散。亂數為精確 32 位元整數運算；時間步依當地流速調整，慢速渦流區步長較大。多組亂數種子驗證，M 的統計誤差約 ±0.03；少數追蹤點會困在封閉渦流內超過上限而不計入（會顯示比例）。分子擴散係數固定為 0.0002（格子單位）。只有同一個 Re 下的正、反向才互相比較。二維模型沒有真實晶片裡的三維二次流，結果只代表此模型。第三關與第一、二關使用同一個參考圖特斯拉閥；直管對照組的寬度與它的入口相同，兩者的流量、U、ν、Re 完全相同。驗證（tests/d_ref.js mix，每列 200 點×3 種子）：Re 30 正向 M ≈ 0.32、反向 ≈ 0.28、直管 ≈ 0.33；Re 60 正向 ≈ 0.39、反向 ≈ 0.29、直管 ≈ 0.32；Re 100 正向 ≈ 0.47、反向 ≈ 0.26、直管 ≈ 0.32（同寬直管）。另以獨立方法複核（順著流動追蹤 6000 顆帶擴散的粒子，Re 100）：直管 0.33、正向 0.37、反向 0.33，結論相同；Re 150 反向也只有 0.26。也就是說，在這個流道裡 Re 60 以上正向混得比直管好，阻力較大的反向和直管差不多（可能原因：反向時支流把靠外側的水帶出去、繞一圈又送回同一側，兩色的分界沒有被摺疊或拉長，仍只靠分子擴散混合）——阻力大不代表混合一定好。',
+ 4:'每一節＝一個水滴形島（內側貼齊筆直主通道）與繞過圓鈍端的迴圈，依序上下交錯。正向（藍，右→左）先經過圓鈍端；反向（紅，左→右）先遇到尖端，以淺角進入迴圈、繞過圓鈍端後以接近 180° 衝回主流（與參考圖的紅色箭頭相同）。固定 Re = 150（第六版起；此幾何在 Re 150 仍為穩定流，正反向差異約是 Re 100 時的兩倍）、主通道寬 8 格、迴圈寬 7 格；格點 480×64。驗證（tests/d_seg.js，Re 150）：40°×1 → 1.059、20°×4 → 1.039、40°×4 → 1.060、60°×4 → 1.037、50°×8 → 1.069、50°×12 → 1.071；亂數組合與極端值皆穩定。標準解析度會低估 D−1，請比較組合之間的趨勢，不要把數字當成實物的量測值；「最佳設計」只代表目前模擬條件下的結果。'};
+
+// ===== 關卡切換 =====
+const tabs=$('#tabs');[1,2,3,4,5].forEach(i=>{const b=document.createElement('button');b.className='sm tab';b.dataset.i=i;b.onclick=()=>go(i);tabs.appendChild(b)});
+function tabsUI(){[...tabs.children].forEach(b=>{const i=+b.dataset.i,l=!G.unlocked.has(i);b.textContent=(l?'🔒 ':'')+(i===5?'結論':LVN[i].split(' ')[0]+' '+LVN[i].split(' ')[1]);b.classList.toggle('lock',l);b.classList.toggle('on',i===S.lv)});
+ $$('#cards .card').forEach(b=>{const i=+b.dataset.i;b.classList.toggle('lock',!G.unlocked.has(i));b.querySelector('.lk').textContent=G.unlocked.has(i)?'':'🔒 '})}
+function go(i){if(!G.unlocked.has(i)){toast('完成前一關後才會解鎖');return}clearTimeout(G.nextT);$('#next').classList.remove('on');if(i===5){showEnd();return}hideEnd();if(mode!=='lab')start();if(i!==S.lv)S.dir=1;pick(i)}
+function pick(i){S.lv=i;const t=TXT[i];$('#sT').textContent='關卡 '+LVN[i];$('#sG').textContent=t.g;$('#sS').innerHTML=t.s.map(x=>'<li>'+x+'</li>').join('');$('#sP').innerHTML=t.p;$('#model').innerHTML='<b>模型說明</b>：'+MODEL[i];
+ $$('#lab [data-lv]').forEach(e=>e.classList.toggle('hid',!e.dataset.lv.split(',').includes(String(i))));$$('#lab details.fd').forEach(d=>d.open=false);// 第十七版：參數在左欄、成果在右欄；進每一關時摺疊區全部收合
+ $('#dat2')._h=$('#why')._h='';$('#dat2').innerHTML=$('#why').innerHTML='';
+ $('#re').max=i===2?150:100;if(S.Re>+$('#re').max)S.Re=+$('#re').max;$('#re').value=S.Re;
+ $('#build').classList.toggle('hid',i!==4);
+ if(i===2){S.view=$('#vw').value;styleUI()}$('#dF').classList.toggle('on',S.dir>0);$('#dR').classList.toggle('on',S.dir<0);
+ G.vv=null;build(i);if(i===2)styleUI();setView();Object.assign(goal,camFor(i));tabsUI();table();progress();segUI();readout();if(i===2&&distinct2()>=3&&!G.l2Ask)openQuiz()}
+// 完成時先讓觀眾再看 5 秒模擬結果，才跳出「前往下一關」（分頁立即解鎖）
+const HOLD=5000;
+function unlock(i,title,body,btn){if(G.unlocked.has(i))return;G.unlocked.add(i);tabsUI();$('#nxT').textContent=title;$('#nxB').innerHTML=body;$('#nxGo').textContent=btn;$('#nxGo').onclick=()=>go(i);clearTimeout(G.nextT);G.nextT=setTimeout(()=>{if(mode==='lab')$('#next').classList.add('on')},HOLD)}
+$('#nxStay').onclick=()=>$('#next').classList.remove('on');
+
+// ===== 收斂與讀數 =====
+function dS(){const a=sims[0].stats(),b=sims[1].stats();return{D:b.mean/a.mean,a,b}}
+// 「已趨穩」一旦成立就鎖定到流動條件改變為止（收斂判斷用的視窗會隨時間滑動，邊界上可能閃爍，造成紀錄或暫停時有時無）
+const _settled=Sim.prototype.settled;Sim.prototype.settled=function(){if(this.gen!=null&&this.done===this.gen)return true;const r=_settled.call(this);if(r&&this.gen!=null)this.done=this.gen;return r};
+function settledAll(){return sims.length&&sims.every(s=>s.settled())}
+// 非穩態（週期性擺動）：已算超過 15000 步、出口平均流量在 5% 內，但壓力差持續擺動（第二關記錄渦流用；D 不在此狀態下記錄）
+function oscill(s){const t=s.stats();return s.ns>15000&&s.rAvg!=null&&Math.abs(s.rAvg-1)<.05&&t.amp>=.005&&!s.settled()}
+const f3=v=>(v*1000).toFixed(2);
+function kv(a,b,c){return'<div class="kv"><span>'+a+'</span><b'+(c?' style="color:'+c+'"':'')+'>'+b+'</b></div>'}
+function stat(ok,osc){const fc=ok&&sims.every(s=>s.fromCache);return kv('狀態（已算 '+sims[0].ns+' 步）',ok?(fc?'已趨穩（之前算過，直接載入）':'已趨穩'):osc?'週期性擺動':'收斂中…',ok?'#7cf0a8':osc?'#ffd36b':'#ff9a3c')}
+// 收斂進度（估計）：下游截面流量與入口流量的誤差由 30% 降到 0.3% 的對數比例
+function convP(){let p=1;for(const s of sims){if(s.settled())continue;const q=Math.max(.003,s.qErr(s.xb)),t=s.stats();p=Math.min(p,s.ns<300?0:Math.min(.95,Math.max(0,Math.log(.3/q)/Math.log(100))*.8+(t.drift<.002?.15:0)))}return p}
+function convBox(){const p=convP();return'<div class="big"><small>電腦正在計算正反兩向的穩定流場…</small><div class="pbar"><i style="width:'+(p*100).toFixed(0)+'%"></i></div><small>完成後才顯示比較（計算途中壓力還在建立，數字不準）</small></div>'}
+// 壓力計：兩條長條代表正向、反向需要的壓力差（同一比例尺，從 0 開始）；反向多出來的部分用亮色標示
+// 正反向比較的大字橫幅＋壓力計（第一、四關共用）
+const dTxt=D=>Math.abs(D-1)<.0005?'正反向需要的壓力差 <b>幾乎相同</b>':D>1?'反向（紅）比正向多需要 <b>'+((D-1)*100).toFixed(1)+'%</b> 的壓力差':'正向（藍）比反向多需要 <b>'+((1/D-1)*100).toFixed(1)+'%</b> 的壓力差';
+const bigD=d=>'<div class="big">'+dTxt(d.D)+gauge(d)+'</div>';
+// 第一關：依實際的 D 說明兩方向的流動型態（範本在 Re ≥ 10 時 D < 1：反向的水流進每個迴圈，迴圈等於並聯通道；正向的水被擠在中間折線，迴圈裡是渦流）
+function l1why(D){return D<1?'看上下兩個閥：反向（紅，左→右）的水和參考圖一樣會流進每個側邊迴圈，但模擬算出這個方向反而比較省力——迴圈裡水流得快、渦心很少，迴圈看起來像多開的並聯通道（推測原因：這個流道的迴圈回流和主流不是正面對撞）；正向（藍，右→左）的水在每個岔口急轉彎、被擠在中間的折線，迴圈裡變成打轉的渦流（紫色、白圈），所以需要較大的壓力差。':'正向（藍，右→左）的水大多直接走主通道，迴圈裡幾乎不流；反向（紅，左→右）的水和參考圖一樣被導進側邊迴圈（迴圈裡流得快），繞一圈再和主流匯合，多出來的轉彎與匯流造成額外的能量耗散，所以需要較大的壓力差。注意：偵測到的渦心數不一定是反向比較多。'}
+// 壓力計：正向（藍）、反向（紅）兩條長條，同一比例尺、從 0 開始；較大的那一條多出來的部分加亮標示（D < 1 時是正向較長）
+function gauge(d){const a=d.a.mean,b=d.b.mean,mx=Math.max(a,b),w=v=>(v/mx*100).toFixed(1)+'%',lo=Math.min(a,b);
+ return'<div class="gauge"><div><span>正向</span><b style="width:'+w(lo)+';background:'+FWC+'"></b>'+(a>b?'<em style="width:'+w(a-b)+';background:'+FWC+';box-shadow:0 0 8px '+FWC+'"></em>':'')+'</div><div><span>反向</span><b style="width:'+w(lo)+';background:'+REVC+'"></b>'+(b>a?'<em style="width:'+w(b-a)+';background:'+REVC+';box-shadow:0 0 8px '+REVC+'"></em>':'')+'</div></div>'}
+// 第十六版：數據欄只放重點（#dat），其餘放進可展開的「更多數據」（#dat2）與「為什麼？」（#why）；內容沒變才不重寫，展開狀態與按鈕點擊不會被打斷
+function setH(e,h){if(e._h!==h){e.innerHTML=h;e._h=h}}
+function foldUI(){$('#advD').classList.toggle('hid',!$('#advD').querySelector('.row:not(.hid)'));$('#datD').classList.toggle('hid',!$('#dat2')._h);$('#recD').classList.toggle('hid',!$('#tb').innerHTML);$('#whyD').classList.toggle('hid',!$('#why')._h)}
+function readout(){const lv=S.lv;if(!sims.length)return;const base=kv('實際 Re',Math.round(S.ReE))+kv('入口平均流速 U（格子單位）',S.U.toFixed(3))+kv('運動黏度 ν（格子單位）',((S.tau-.5)/3).toFixed(4));let h='',m=base,w='',ws='為什麼？',hint='';
+ if(lv===1){const ok=settledAll(),d=dS(),vv=G.vv=sims.map(s=>s.ns>2000?s.vortices():[]);// 只有兩邊都「已趨穩」才顯示比較：收斂途中壓力還在建立，正反向的大小可能暫時顛倒（不是結果）
+  h=(ok?'<div class="big">'+dTxt(d.D)+gauge(d)+'<small>偵測到的渦心（白圈）：正向 '+vv[0].length+' 個　反向 '+vv[1].length+' 個</small></div>':convBox())+stat(ok);
+  m+=kv('ΔP 正向（格子單位 ×10⁻³）',ok?f3(d.a.mean):'計算中')+kv('ΔP 反向（格子單位 ×10⁻³）',ok?f3(d.b.mean):'計算中')+kv('Diodicity D',ok?d.D.toFixed(3):'—');
+  if(ok){const k=Math.round(S.ReE);if(!G.l1.has(k)){G.l1.set(k,d.D);G.l1v.set(k,[vv[0].length,vv[1].length]);table();progress()}hint='Re = '+k+'：D = '+d.D.toFixed(3)+'，'+dTxt(d.D).replace(/<[^>]+>/g,'')+'。'+(Math.abs(d.D-1)<.01?'差異很小：Re 小時黏滯力主導，流動接近可逆，正反向幾乎一樣。':l1why(d.D));
+   if(G.l1.size>=3&&!G.l1Ask){G.l1Ask=true;unlock(2,'🎉 第一關完成！','你已經比較了 '+G.l1.size+' 種雷諾數：'+[...G.l1].sort((a,b)=>a[0]-b[0]).map(([r,v])=>'Re '+r+' → D '+v.toFixed(3)).join('、')+'。<br>要前往第二關「渦流現形記」，還是留下來繼續試？','前往第二關 →')}}
+  else hint='等兩邊的流場都穩定（通常幾秒；之前算過的條件會直接載入）。粒子：藍色是正向（右→左）、紅色是反向（左→右）。'}
+ else if(lv===2){const s=sims[0],ok=s.settled(),osc=!ok&&oscill(s),v=s.ns>2000?s.vortices():[];G.vv=[v];const cw=v.filter(q=>q.w<0).length;
+  h=kv('偵測到的渦心數（逆時針／順時針）',v.length+'（'+(v.length-cw)+'／'+cw+'）')+stat(ok,osc);
+  m+=kv('最強渦度 |ω|·W/U',v.length?(Math.max(...v.map(q=>Math.abs(q.w)))*s.W/s.U).toFixed(2):'0')+kv('ΔP（×10⁻³）',f3(s.stats().mean));
+  if(S.style==='stl'){w=LIM2;ws='為什麼反向的渦流比較少？'}
+  if(ok||osc)rec2(true);// 第十六版：第二關改成自動記錄（流場穩定或確定為週期性擺動時）
+  hint=(ok||osc?'這個條件已自動記錄。':'流場還在變化，穩定後會自動記錄。')+(v.length?'偵測到 '+v.length+' 個渦心（白色圓圈）。紅、藍底色是渦度（旋轉方向），貼牆處的渦度大不代表那裡有渦心。':'目前沒有偵測到渦心：水大致平順地沿流道走（貼牆處仍有渦度）。')}
+ else if(lv===3){const ok=settledAll();h=stat(ok);const r=l3get(S.dir,Math.round(S.ReE));// 結果以「方向＋Re」記錄；換了 Re 就要重算
+  if(r){h+=kv('混合指標 M 直管',r.Ms.toFixed(2)+' ± 0.03')+kv('混合指標 M 特斯拉閥',r.Mt.toFixed(2)+' ± 0.03');if(r.lost)m+=kv('未追回入口的追蹤點',(r.lost/r.n*100).toFixed(1)+'%')}
+  if(ok&&!r&&!G.mixJob)startMix();if(G.mixJob)h+=kv('計算出口混合（流場暫停）','第 '+Math.min(G.mixJob.k+1,G.mixJob.list.length)+'／'+G.mixJob.list.length+' 列…');
+  w=LIM3;ws='為什麼反向沒有混勻？';hint=r?l3hint(r):'等流場穩定後，電腦會從出口反向追蹤，算出每一格的顏色。'}
+ else if(lv===4){const T=G.l4;if(T.testing){const ok=settledAll(),d=dS(),vv=G.vv=sims.map(s=>s.ns>2000?s.vortices():[]);h=(ok?bigD(d):convBox())+kv('組合',segName(T.segs))+stat(ok);m+=kv('Diodicity D',ok?d.D.toFixed(3):'計算中')+kv('渦心 正向／反向',vv[0].length+'／'+vv[1].length);
+   hint='測試中：正向（上，藍，右→左）與反向（下，紅，左→右）用同樣的流量、同樣的 Re 各算一次…金色粒子＝正在流經支流（迴圈）的水。';if(ok){T.last={key:T.segs.join(','),d};finishTest(d.D,vv.map(q=>q.length))}}
+  else{const L=T.last&&T.last.key===T.segs.join(',')&&T.segs.length?T.last.d:null;if(L)h=bigD(L);h+=kv('目前組合',T.segs.length?segName(T.segs):'（空的）');hint=T.segs.length?'按「▶ 測試」開始計算。':'先在下方點角度按鈕，加入單節模組。'}}
+ setH($('#dat'),h);setH($('#dat2'),m);setH($('#why'),w);$('#whyS').textContent=ws;$('#sH').textContent=hint;foldUI();nowUI()}
+function progress(){const lv=S.lv;let t='';
+ if(lv===1)t='已完成 '+G.l1.size+'／3 種雷諾數：'+([...G.l1.keys()].sort((a,b)=>a-b).map(r=>'Re '+r).join('、')||'—');
+ else if(lv===2){const n=distinct2();t='已記錄 '+n+'／3 種不同條件'+(n>=3?'；知識確認 '+G.l2Quiz.filter(x=>x===2).length+'／2 題答對':'')}
+ else if(lv===3){const R=Math.round(S.ReE),f=l3get(1,R),b=l3get(-1,R),pr=l3pair();t='目前 Re '+R+'：直管 '+(f||b?'✔':'—')+'　正向 '+(f?'✔':'—')+'　反向 '+(b?'✔':'—')+'（需要在同一個 Re 下看完正、反向）'+(pr?'；已完成：Re '+pr.Re:'')}
+ else if(lv===4)t='已測試 '+new Set(G.l4.tests.map(r=>r.key)).size+'／2 種組合';$('#sPr').textContent=t;nowUI()}
+// 第十七版：「▶ 現在要做」——依目前進度告訴學生下一步
+function nowTask(){const lv=S.lv,ok=sims.length&&(lv===2?sims[0].settled()||oscill(sims[0]):settledAll());
+ if(lv===1){const n=G.l1.size;if(n>=3)return[1,'完成！可以按上方「II 渦流現形記」前往第二關，或繼續試別的 Re。'];if(!ok)return[0,'等電腦把正向、反向兩邊的流場算完，右邊會出現「哪一邊需要比較大的壓力差」。'];return[0,'拖動左邊「雷諾數 Re」滑桿，換一個還沒試過的 Re（已完成 '+n+'／3 種）。']}
+ if(lv===2){const n=distinct2(),q=G.l2Quiz.filter(x=>x===2).length;if(n>=3&&q>=2)return[1,'完成！可以前往第三關，或繼續觀察不同條件的渦流。'];if(n>=3)return[0,'回答 2 題「渦流知識確認」（兩題都答對才能前往第三關）。'];if(!ok)return[0,'等流場穩定，電腦會自動記錄這次的渦心數（白色圓圈）。'];return[0,'換「流動方向」、「雷諾數 Re」或「流道樣式」，記錄不同條件的渦流（已記錄 '+n+'／3 種）。']}
+ if(lv===3){const R=Math.round(S.ReE),f=l3get(1,R),b=l3get(-1,R);if(l3pair())return[1,'完成！比較右邊的混合指標 M，再前往第四關。'];if(!f&&!b)return[0,S.dir>0?'等電腦算出出口的混色（右邊會出現混合指標 M）。':'先按左邊「← 正向（藍）」，等電腦算出出口混色。'];if(!f)return[0,'按左邊「← 正向（藍）」，在同一個 Re 下再看一次。'];if(!b)return[0,'按左邊「反向 →（紅）」，在同一個 Re 下再看一次。'];return[0,'等電腦算完。']}
+ if(lv===4){const T=G.l4,n=new Set(T.tests.map(r=>r.key)).size;if(T.testing)return[0,'電腦正在算正向與反向的壓力差，請稍等…'];if(n>=2)return[1,'完成！可以按右邊「🏆 分享我的設計結果」上排行榜，或前往結論。'];if(!T.segs.length)return[0,'在畫面下方點角度按鈕，把單節模組加進你的特斯拉閥（最多 12 節）。'];if(T.last&&T.last.key===T.segs.join(','))return[0,'換一種角度或節數，再按「▶ 測試」（已測試 '+n+'／2 種）。'];return[0,'按畫面下方的「▶ 測試」，看看你的設計 D 是多少（已測試 '+n+'／2 種）。']}
+ return[0,'']}
+const mTxt=t=>window.FL_M?t.replace(/左邊|右邊|畫面下方/g,'下方'):t;// 手機版：參數與成果都在下方捲動區
+function nowUI(){if(!S.lv)return;const[d,t0]=nowTask(),t=mTxt(t0),b=$('#sNow');if(b._t!==t){b.textContent=t;b._t=t}b.parentNode.classList.toggle('done',!!d);$('#shareRow').classList.toggle('hid',!(S.lv===4&&new Set(G.l4.tests.map(r=>r.key)).size>=2))}
+
+// ===== 紀錄表 =====
+function table(){const lv=S.lv,th=$('#th'),tb=$('#tb');let H='',B='';
+ if(lv===1){H='<tr><th>Re</th><th>D</th><th>較費力的方向</th><th>渦心 正／反</th></tr>';B=[...G.l1].sort((a,b)=>a[0]-b[0]).map(([r,v])=>'<tr><td>'+r+'</td><td>'+v.toFixed(3)+'</td><td>'+(Math.abs(v-1)<.005?'差不多':v>1?'反向 +'+((v-1)*100).toFixed(1)+'%':'正向 +'+((1/v-1)*100).toFixed(1)+'%')+'</td><td>'+(G.l1v.get(r)||['—','—']).join('／')+'</td></tr>').join('')}
+ else if(lv===2){H='<tr><th>條件</th><th>渦心</th><th>最強|ω|</th></tr>';B=G.l2.map(r=>'<tr><td>'+r.label+'</td><td>'+r.n+'</td><td>'+r.w+'</td></tr>').join('')}
+ else if(lv===3){H='<tr><th>Re・方向</th><th>M 直管</th><th>M 特斯拉閥</th></tr>';B=Object.values(G.l3).sort((a,b)=>a.Re-b.Re||b.dir-a.dir).map(r=>'<tr><td>Re '+r.Re+'・'+(r.dir>0?'正向':'反向')+'</td><td>'+r.Ms.toFixed(2)+'</td><td>'+r.Mt.toFixed(2)+'</td></tr>').join('')}
+ else if(lv===4){H='<tr><th>組合</th><th>節數</th><th>D</th><th>渦心 正／反</th></tr>';B=G.l4.tests.map(r=>'<tr><td>'+r.name+'</td><td>'+r.n+'</td><td>'+r.D.toFixed(3)+'</td><td>'+r.vc.join('／')+'</td></tr>').join('')}
+ th.innerHTML=H;tb.innerHTML=B;bars();foldUI()}
+// D 長條圖：以 D = 1 為中線，D > 1 往右（紅：反向較費力）、D < 1 往左（藍：正向較費力），長度依 |D − 1|，D < 1 也能正確顯示
+function bars(){const lv=S.lv;let h='';const dbar=(lab,v,sc)=>{const w=Math.min(70,Math.abs(v-1)/sc*70);return'<div><span style="min-width:64px">'+lab+'</span><span style="display:inline-flex;width:142px;height:10px;position:relative;background:rgba(255,255,255,.06);border-radius:3px"><i style="position:absolute;left:'+(v<1?71-w:71)+'px;width:'+Math.max(1,w)+'px;height:100%;background:'+(v<1?FWC:REVC)+'"></i><i style="position:absolute;left:70px;width:2px;height:100%;background:#fff;opacity:.6"></i></span><span>'+v.toFixed(3)+'</span></div>'};
+ const sc=a=>Math.max(.02,...a.map(v=>Math.abs(v-1)));
+ if(lv===1&&G.l1.size){const a=[...G.l1].sort((x,y)=>x[0]-y[0]),k=sc(a.map(x=>x[1]));h='<small>D 與雷諾數（模擬；中線＝1，往左＝正向較費力，往右＝反向較費力）</small>'+a.map(([r,v])=>dbar('Re '+r,v,k)).join('')}
+ if(lv===4&&G.l4.tests.length){const a=G.l4.tests,k=sc(a.map(x=>x.D));h='<small>各組合的 D（模擬，Re '+RE4+'；中線＝1）</small>'+a.map(r=>dbar(r.name.length>14?r.name.slice(0,13)+'…':r.name,r.D,k)).join('')}
+ $('#bars').innerHTML=h}
+
+// ===== 第二關：記錄渦流與兩道選擇題 =====
+// 條件標籤包含所有會改變流場的參數（範本樣式下幾何參數不適用）
+const cond2=()=>(S.dir>0?'正向':'反向')+'・Re '+Math.round(S.ReE)+'・'+{stl:'參考圖',classic:'單側 '+S.alpha+'°',dual:'雙側 '+S.alpha+'°'}[S.style]+(S.style==='stl'?'':'・'+S.n+'節・w'+S.wm+'・g'+S.g+'・ℓ'+S.len);
+const distinct2=()=>new Set(G.l2.map(r=>r.label)).size;
+function rec2(auto){const s=sims[0];if(!(s.settled()||oscill(s))){if(!auto)toast('流場還在變化，等狀態穩定後再記錄');return}const lab=cond2()+(s.settled()?'':'（擺動中）');
+ if(G.l2.some(r=>r.label===lab)){if(!auto)toast('這個條件已經記錄過了，換個 Re、方向或流道樣式試試');return}const v=s.vortices();
+ G.l2.push({label:lab,n:v.length,w:v.length?(Math.max(...v.map(q=>Math.abs(q.w)))*s.W/s.U).toFixed(2):'0',Re:Math.round(S.ReE)});table();progress();if(auto)toast('已自動記錄：'+lab+'，渦心 '+v.length+' 個');
+ if(distinct2()>=3&&!G.l2Ask)setTimeout(openQuiz,500)}
+function openQuiz(){quizUI();$('#qm').classList.add('on')}
+const QZ=[['雷諾數（Re）越大，特斯拉閥裡出現渦流的機率會？',['越大，越容易出現渦流','越小，越不容易出現渦流','不會改變','和雷諾數無關，只和水的顏色有關'],0,
+  'Re ＝ 慣性效應／黏滯效應。Re 越大，慣性相對越強，水越沒辦法貼著牆轉彎，就容易在分支與急彎處分離，形成回流與渦流。對照你的紀錄：多數情況 Re 大時偵測到的渦心較多，但不保證每一次都增加，要以實際模擬為準。'],
+ ['用相同的推力推水時，渦流會讓水流變快還是變慢？',['變快，因為水會被甩出去','變慢，因為渦流把推水的能量變成內能，阻力變大','不影響，渦流只是好看','讓水完全停住不動'],1,
+  '渦流讓速度梯度變大、剪切變強，黏滯耗散增加，ΔP<sub>loss</sub> 上升：用相同的推力，流過去的水變少（變慢）。本站的模擬是另一種比法——固定流量，所以你看到的是能量耗散較大的方向「需要更大的壓力差」，兩者說的是同一件事。注意：不能只看渦心數，本模型中渦心較多的正向反而比較省力。渦流不是讓水停住，水仍在流動。']];
+function quizUI(){const box=$('#quiz');box.innerHTML=QZ.map((q,i)=>'<div class="qz" data-q="'+i+'"><b>'+(i+1)+'. '+q[0]+'</b>'+q[1].map((t,k)=>'<button class="sm" data-k="'+k+'">'+'ABCD'[k]+'. '+t+'</button>').join('')+'<div class="note fb">'+(G.l2Quiz[i]===2?'<span style="color:#7cf0a8">✔ 答對了！</span> '+q[3]:'')+'</div></div>').join('')}
+$('#quiz').addEventListener('click',e=>{const b=e.target.closest('button[data-k]');if(!b)return;const d=b.closest('.qz'),i=+d.dataset.q,k=+b.dataset.k,q=QZ[i],ok=k===q[2];
+ if(ok)G.l2Quiz[i]=2;else if(G.l2Quiz[i]!==2)G.l2Quiz[i]=1;d.querySelector('.fb').innerHTML=(ok?'<span style="color:#7cf0a8">✔ 答對了！</span> ':'<span style="color:#ff9a3c">再想想：</span> ')+q[3];progress();
+ if(G.l2Quiz.every(x=>x===2)&&!G.l2Ask){G.l2Ask=true;setTimeout(()=>{$('#qm').classList.remove('on');unlock(3,'🎉 第二關完成！','你記錄了 '+distinct2()+' 種渦流狀態，也答對了 2 題。<br>要前往第三關「驗血晶片的混色魔術」，還是留下來繼續觀察渦流？','前往第三關 →')},1400)}});
+
+// ===== 第三關：出口混合（反向追蹤，分批計算避免畫面卡住） =====
+const NW=200;// 每列追蹤點數（多組種子驗證：M 的標準差約 0.01）
+const l3get=(d,Re)=>G.l3[d+'@'+Re]||null;
+// 同一個 Re 下正、反向都完成的那一組（取最新）
+function l3pair(){const L=Object.values(G.l3).filter(r=>r.dir>0&&l3get(-1,r.Re)).sort((a,b)=>b.t-a.t)[0];return L?{Re:L.Re,f:L,b:l3get(-1,L.Re)}:null}
+function startMix(){G.mixJob={k:0,w:0,b:0,c:0,lost:0,n:0,st:{},list:[...sims[0].mixRows().map(y=>[0,y]),...sims[1].mixRows().map(y=>[1,y])],res:[[],[]],R:makeRng(11),dir:S.dir,Re:Math.round(S.ReE)}}
+// 流場已穩定，計算期間暫停 LBM（見主迴圈），每幀用約 30 ms；追蹤點可跨幀續算
+function mixStep(){const J=G.mixJob;if(!J)return;const t0=performance.now();
+ while(performance.now()-t0<30){const [si,y]=J.list[J.k],v=sims[si].walkBack(y,DM,J.R,J.st,3000);if(v===null)continue;J.st={};J.n++;if(v>=0){J.c++;J.b+=v}else J.lost++;J.w++;
+  if(J.w>=NW){J.res[si].push(J.c?J.b/J.c:.5);J.k++;J.w=J.b=J.c=0;
+   if(J.k>=J.list.length){const [ps,pt]=J.res;G.l3[J.dir+'@'+J.Re]={Ms:mixIndex(ps),Mt:mixIndex(pt),ps,pt,Re:J.Re,dir:J.dir,lost:J.lost,n:J.n,t:Date.now()};G.mixJob=null;table();progress();mixBars();readout();
+    const pr=l3pair();if(pr&&!G.l3Ask){G.l3Ask=true;unlock(4,'🎉 第三關完成！','在相同的 Re = '+pr.Re+' 下，直管、正向、反向都看完了：<br>直管 M = '+pr.f.Ms.toFixed(2)+'、特斯拉閥正向 M = '+pr.f.Mt.toFixed(2)+'、特斯拉閥反向 M = '+pr.b.Mt.toFixed(2)+'（± 0.03）。<br>要前往第四關「設計你的特斯拉閥」，還是留下來繼續看？','前往第四關 →')}return}}}}
+// 第三關提示依實際數字給（差值一律用 Math.abs 判斷；不預設哪個方向混得比較好）
+function l3hint(r){const o=l3get(-S.dir,r.Re),me=S.dir>0?'正向（藍，右→左）':'反向（紅，左→右）',ot=S.dir>0?'反向':'正向',t='特斯拉閥 M = '+r.Mt.toFixed(2)+'，直管 M = '+r.Ms.toFixed(2)+'。',ds=r.Mt-r.Ms;
+ let h=me+'：'+t+(Math.abs(ds)<.1?'和直管差不多：兩色大多保持並排，只靠分子擴散混合。':ds>0?'比直管混得好很多：水在岔口急轉彎、迴圈裡的渦流把兩色捲在一起，接觸面拉長。':'比直管還少一些：兩色被分成幾股再並排合流，接觸面沒有變長。');
+ if(o){const dd=r.Mt-o.Mt;h+=Math.abs(dd)<.08?'和'+ot+'（M = '+o.Mt.toFixed(2)+'）差不多：Re 小時流動接近可逆，方向的差別變小。':'和'+ot+'（M = '+o.Mt.toFixed(2)+'）相比'+(dd>0?'混得較均勻':'混得較少')+'。'}
+ else h+='接著切換到'+ot+'比較。';return h}
+function mixBars(){const el=$('#mixBars'),r=l3get(S.dir,Math.round(S.ReE));if(!r){el.innerHTML='';return}const strip=(ph,t)=>'<div style="display:flex;align-items:center;gap:6px;font-size:12px;margin:3px 0"><span style="min-width:70px">'+t+'</span><span style="display:flex;flex-direction:column-reverse;border:1px solid var(--ln);border-radius:4px;overflow:hidden">'+ph.map(p=>'<i style="display:block;width:120px;height:6px;background:rgb('+(p<.5?mix3(YC,GC,p*2):mix3(GC,BC,(p-.5)*2)).map(Math.round).join(',')+')"></i>').join('')+'</span></div>';
+ el.innerHTML='<small>出口色條（上＝流道上緣；藍＝藍色水、黃＝黃色水、綠＝混合）</small>'+strip(r.ps,'直管')+strip(r.pt,'特斯拉閥')}
+
+// ===== 第四關：組裝單節模組 =====
+const segName=a=>{if(!a.length)return'—';const o=[];a.forEach(v=>{const l=o[o.length-1];if(l&&l[0]===v)l[1]++;else o.push([v,1])});return o.map(([v,c])=>v+'°'+(c>1?'×'+c:'')).join('＋')};
+const segIcon=al=>{const t=Math.tan(al*Math.PI/360),R=Math.min(9.25,1+26*t),L=(R-1)/t,sx=1.15;return'<svg width="58" height="30" viewBox="-4 -26 62 30"><line x1="-4" y1="2" x2="58" y2="2" stroke="#2de2ff" stroke-width="3"/><path d="M'+(48)+' -1 L'+(48-L*sx)+' '+(-1-2*R*sx*0+0)+' A'+R+' '+R+' 0 1 1 '+(48-L*sx)+' '+(-1-2*R)+' Z" fill="none" stroke="#9fd" stroke-width="2.6" transform="translate(54,0) scale(-1,1)"/></svg>'};// 圖示左右翻轉：顯示的流道島尖端在左（反向＝紅，由左往右先遇到尖端）
+const sb=$('#segBtns');[20,30,40,50,60].forEach(a=>{const b=document.createElement('button');b.innerHTML=segIcon(a)+'<span>'+a+'°</span>';b.title='加入一節 '+a+'° 的特斯拉閥';b.onclick=()=>{if(G.l4.testing)return;if(G.l4.segs.length>=12){toast('最多 12 節');return}G.l4.segs.push(a);segUI();build(4);readout();goal.d=fitD(4)};sb.appendChild(b)});
+$('#segUndo').onclick=()=>{if(G.l4.testing||!G.l4.segs.length)return;G.l4.segs.pop();segUI();build(4);readout();goal.d=fitD(4)};
+$('#segClr').onclick=()=>{if(G.l4.testing)return;G.l4.segs=[];segUI();build(4);readout();goal.d=fitD(4)};
+$('#segTest').onclick=()=>{if(G.l4.testing){G.l4.testing=false;segUI();build(4);readout();return}if(!G.l4.segs.length){toast('請先加入至少一節模組');return}G.l4.testing=true;segUI();build(4);readout()};
+function segUI(){const T=G.l4;$('#segN').textContent=T.segs.length+'／12 節'+(T.segs.length?'：'+segName(T.segs):'');$('#segTest').textContent=T.testing?'■ 停止測試':'▶ 測試';$$('#segBtns button,#segUndo,#segClr').forEach(b=>b.disabled=T.testing)}
+function finishTest(D,vc){const T=G.l4,key=T.segs.join(',');T.tail=performance.now()+HOLD;// 測完後粒子再流 5 秒才停
+ T.tests.unshift({name:segName(T.segs),n:T.segs.length,D,key,vc:vc||['—','—']});if(T.tests.length>10)T.tests.pop();T.testing=false;segUI();table();progress();
+ toast('測試完成：'+segName(T.segs)+' 的 D = '+D.toFixed(3));if(new Set(T.tests.map(r=>r.key)).size>=2&&!G.l4Ask){G.l4Ask=true;const b=[...T.tests].sort((x,y)=>y.D-x.D)[0];
+  G.l4Msg='你已經測試了 '+new Set(T.tests.map(r=>r.key)).size+' 種組合，在目前的模擬條件下（二維模型、Re '+RE4+'），D 最大的是「'+b.name+'」（D = '+b.D.toFixed(3)+'）；這不代表它在真實裝置或其他條件下也一定最好。<br>接下來看看結論吧！';
+  clearTimeout(G.shT);G.shT=setTimeout(()=>{if(mode==='lab'&&S.lv===4)openShare(true);else unlock(5,'🎉 第四關完成！',G.l4Msg,'看結論 →')},HOLD)}}// 第十七版：先問要不要分享設計結果，再問要不要前往結論
+
+// ===== 參數 =====
+const on=(id,fn,ev='input')=>$(id).addEventListener(ev,fn);
+on('#re',e=>{if(mode==='lab')readout();// 換 Re 前先把剛趨穩的結果記下來
+ S.Re=+e.target.value;setFlow();resetConv();G.vv=null;if(S.lv===3)mixBars();progress()});
+$$('#rPre button').forEach(b=>b.onclick=()=>{S.Re=+b.dataset.re;$('#re').value=S.Re;setFlow();resetConv()});
+$('#dF').onclick=()=>{if(S.dir>0)return;S.dir=1;$('#dF').classList.add('on');$('#dR').classList.remove('on');pick(S.lv)};$('#dR').onclick=()=>{if(S.dir<0)return;S.dir=-1;$('#dR').classList.add('on');$('#dF').classList.remove('on');pick(S.lv)};
+// 第二關：不能調的參數不顯示——範本樣式隱藏幾何參數；染料擴散係數只在「染料」顯示時出現
+function styleUI(){const st=S.style==='stl',l2=S.lv===2;['#al','#wm','#gg','#nn','#ln'].forEach(i=>{$(i).disabled=st;if(l2)$(i).closest('.row').classList.toggle('hid',st)});if(l2)$('#df').closest('.row').classList.toggle('hid',S.view!=='dye');$('#styN').textContent=st?'依參考圖繪製的特斯拉閥（形狀固定）。改選另外兩種樣式，才能調整角度、通道寬、迴圈寬、節數與島長。':'';
+ $('#vA').textContent=S.alpha+'°';$('#vW').textContent=S.wm;$('#vG').textContent=S.g;$('#vN').textContent=S.n;const il=S.lv===2&&!st&&sims[0]&&sims[0].isl&&sims[0].isl[0];$('#vL').textContent=S.len+(il&&Math.abs(il.L-S.len)>1?'（空間不足，實際 '+il.L.toFixed(0)+'）':'');$('#vD').textContent=S.Dif.toFixed(3);$('#vS').textContent=S.steps;foldUI()}
+on('#sty',e=>{S.style=e.target.value;styleUI();pick(2)},'change');
+[['#al','alpha'],['#wm','wm'],['#gg','g'],['#nn','n'],['#ln','len']].forEach(([id,k])=>{on(id,e=>{S[k]=+e.target.value;styleUI()});on(id,()=>pick(2),'change')});
+on('#df',e=>{S.Dif=+e.target.value;styleUI()});on('#vw',e=>{S.view=e.target.value;styleUI()},'change');on('#lid',e=>glass.opacity=+e.target.value);on('#stp',e=>{S.steps=+e.target.value;$('#vS').textContent=S.steps});
+$('#lowp').onclick=e=>{S.low=!S.low;e.target.classList.toggle('on',S.low);S.steps=S.low?3:8;$('#stp').value=S.steps;$('#vS').textContent=S.steps;rs()};
+$('#rm').onclick=e=>{S.rm=!S.rm;e.target.classList.toggle('on',S.rm)};
+$('#rst').onclick=()=>{Object.assign(S,{Re:30,dir:1,style:'stl',alpha:40,wm:8,g:7,n:4,len:26,Dif:.01,steps:8,view:'vort'});[['#re',30],['#al',40],['#wm',8],['#gg',7],['#nn',4],['#ln',26],['#df',.01],['#stp',8],['#lid',.12]].forEach(([i,v])=>$(i).value=v);$('#sty').value='stl';$('#vw').value='vort';pick(2)};
+const ppUI=()=>$('#pp').textContent=S.paused?'▶ 繼續':'⏸ 暫停';
+$('#pp').onclick=()=>{S.paused=!S.paused;S.autoP=false;AP=null;ppUI()};
+$('#rp').onclick=()=>{if(S.lv===4&&!G.l4.testing){build(4);return}build(S.lv,true);readout()};
+// 晶片在 x–y 平面、牆往 +z：俯視＝相機在 +z 正上方（ph = π/2）
+// 關卡畫面：三維畫面只用左右面板之間的區域（投影中心移到這個區域的中央），鏡頭距離依流道大小自動算到剛好填滿
+const VT={ph:Math.PI/2,th:0,d:25,tx:0,ty:0},VS={ph:1.2,th:.12,d:25,tx:0,ty:0};
+function viewRect(){if(window.FL_M&&$('#mscroll')){const t=$('#top').getBoundingClientRect(),m=$('#mscroll').getBoundingClientRect();return{x0:0,x1:innerWidth,y0:t.bottom,y1:m.top}}const W=innerWidth,H=innerHeight,t=$('#top').getBoundingClientRect(),b=$('#bot').getBoundingClientRect(),l=$('#left').getBoundingClientRect(),r=$('#right').getBoundingClientRect(),bd=$('#build');
+ let x0=0,x1=W,y0=t.bottom,y1=b.top;if(W>900){x0=l.right;x1=r.width?r.left:W}else y1=Math.min(y1,l.top);
+ if(S.lv===4&&!bd.classList.contains('hid')){const q=bd.getBoundingClientRect();if(q.height)y1=Math.min(y1,q.top)}
+ if(x1-x0<200){x0=0;x1=W}if(y1-y0<150){y0=0;y1=H}return{x0,x1,y0,y1}}
+let VF=null;// 目前的投影設定（虛擬全畫面大小與偏移）
+function fitD(lv){if(!chips.length||!VF)return 25;const c=chips[0],cw=c.W+.8,ch=(chips.length>1?2*c.H+1.4:c.H)+1.1,v=VF.v;
+ return Math.min(60,Math.max(cw/((v.x1-v.x0)*.96),ch/((v.y1-v.y0)*.9))*VF.fh/(2*Math.tan(Math.PI/8)))}
+const camFor=lv=>({...VS,d:fitD(lv)});
+$('#vTop').onclick=()=>Object.assign(goal,{...VT,d:fitD(S.lv)});$('#vTilt').onclick=()=>Object.assign(goal,camFor(S.lv));
+$('#unlockAll').onclick=()=>{[1,2,3,4,5].forEach(i=>G.unlocked.add(i));tabsUI();toast('已解鎖全部關卡')};
+document.querySelectorAll('.md').forEach(m=>m.addEventListener('click',e=>{if(m.hasAttribute('data-lock'))return;if(e.target===m||e.target.hasAttribute('data-close'))m.classList.remove('on')}));
+
+// ===== 鏡頭 =====
+const cam={th:.3,ph:1.25,d:19,tx:0,ty:1},goal={...cam};let drag=null,mouse=[0,0];const cvs=$('#c');
+cvs.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,pan:e.shiftKey||e.button===2};cvs.setPointerCapture(e.pointerId)});
+cvs.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;
+ if(drag.pan){goal.tx=Math.max(-9,Math.min(9,goal.tx-dx*.015));goal.ty=Math.max(-6,Math.min(6,goal.ty+dy*.015))}else{goal.th-=dx*.006;goal.ph-=dy*.006;clampCam()}});
+// 關卡中限制視角：只能在正面上方左右各約 40°、由正上方到斜 30° 之間轉動，看不到背面
+function clampCam(){if(mode!=='lab')return;goal.th=Math.max(-.7,Math.min(.7,goal.th));goal.ph=Math.max(.55,Math.min(Math.PI/2,goal.ph))}
+cvs.addEventListener('pointerup',()=>drag=null);cvs.addEventListener('contextmenu',e=>e.preventDefault());
+cvs.addEventListener('wheel',e=>{e.preventDefault();goal.d=Math.min(mode==='lab'?Math.max(34,fitD(S.lv)*1.6):34,Math.max(6,goal.d*(1+e.deltaY*.001)))},{passive:false});
+addEventListener('keydown',e=>{if(e.key==='Escape'){$$('.md.on:not([data-lock])').forEach(m=>m.classList.remove('on'));return}if(mode!=='lab')return;const tg=e.target.tagName;if(tg==='INPUT'||tg==='SELECT')return;const k=e.key;
+ if(k==='ArrowLeft')goal.th-=.1;if(k==='ArrowRight')goal.th+=.1;clampCam();if(k==='ArrowUp')goal.d=Math.max(4,goal.d-1);if(k==='ArrowDown')goal.d=Math.min(Math.max(34,fitD(S.lv)*1.6),goal.d+1);if(k===' '&&tg!=='BUTTON'){e.preventDefault();$('#pp').click()}});
+
+// ===== 封面 3D 特斯拉閥（桌面轉盤：只繞鉛直軸旋轉，頂面永遠朝上）=====
+// 由封面 STL 模型的流道截面（與模擬用的同一張遮罩）重建：圓角長條本體＋刻入的流道（平滑輪廓、擠出）。
+// 原始 STL 兩端有未完成的接頭與很薄的牆片，直接顯示會有凸出的薄片，因此改用重建模型；流道形狀與 STL 截面相同，粒子也與流道完全對齊。
+// 第六版：流道改用由 STL 直接切出的高解析遮罩（0.375 mm，tools/cover_mask.py），並正確處理「島」：
+// 輪廓依巢狀層數分類——第 0 層是流道外緣（在本體牆上挖洞），第 1 層是流道內的島（另外擠出成牆），第 2 層是島裡的洞…
+// （第五版把島也當成洞挖掉，島變成凹槽、流道反而凸起，紋路看起來就跑掉了。）
+const KW=14/240.626,FLOOR=15*KW,TOP=50*KW,CMX=x=>(CM_X0+(x+.5)*CM_DX)*KW,CMY=y=>(CM_Y0+(y+.5)*CM_DX)*KW;
+const BX0=Math.ceil((CM_X0+150)/.75),BX1=Math.floor((CM_X0+CM_NX*CM_DX+150)/.75)-1;// 本體範圍換算成模擬格（粒子只畫在本體內）
+const valveModel=new THREE.Group();scene.add(valveModel);valveModel.visible=false;valveModel.scale.y=.42;valveModel.position.y=-.7;
+{const NX=CM_NX,NY=CM_NY,bin=atob(COVER_MASK),sol=new Uint8Array(NX*NY);for(let b=0;b<NX*NY;b++)sol[b]=(bin.charCodeAt(b>>3)>>(b&7))&1?0:1;
+ const loops=contours(sol,NX,NY).map(l=>l.map(p=>new THREE.Vector2(CMX(p[0]),CMY(p[1])))).filter(l=>l.length>8);
+ const x0=CM_X0*KW,x1=(CM_X0+NX*CM_DX)*KW,y0=CM_Y0*KW,y1=(CM_Y0+NY*CM_DX)*KW,rr=1.2*KW,body=new THREE.Shape();
+ body.moveTo(x0+rr,y0);body.lineTo(x1-rr,y0);body.quadraticCurveTo(x1,y0,x1,y0+rr);body.lineTo(x1,y1-rr);body.quadraticCurveTo(x1,y1,x1-rr,y1);body.lineTo(x0+rr,y1);body.quadraticCurveTo(x0,y1,x0,y1-rr);body.lineTo(x0,y0+rr);body.quadraticCurveTo(x0,y0,x0+rr,y0);
+ const inside=(p,poly)=>{let c=false;for(let a=0,b=poly.length-1;a<poly.length;b=a++){const A=poly[a],B=poly[b];if((A.y>p.y)!==(B.y>p.y)&&p.x<(B.x-A.x)*(p.y-A.y)/(B.y-A.y)+A.x)c=!c}return c};
+ const depth=loops.map((l,a)=>loops.reduce((n,m,b)=>n+(a!==b&&inside(l[0],m)?1:0),0));
+ const walls=new THREE.Shape(body.getPoints(4)),shapes=[walls];
+ loops.forEach((l,a)=>{if(depth[a]===0)walls.holes.push(new THREE.Path(l))});
+ loops.forEach((l,a)=>{if(depth[a]%2===1){const sh=new THREE.Shape(l);loops.forEach((m,b)=>{if(depth[b]===depth[a]+1&&inside(m[0],l))sh.holes.push(new THREE.Path(m))});shapes.push(sh)}});
+ const gF=new THREE.ExtrudeGeometry(new THREE.Shape(body.getPoints(4)),{depth:FLOOR,bevelEnabled:false,curveSegments:4}),gW=new THREE.ExtrudeGeometry(shapes,{depth:TOP-FLOOR,bevelEnabled:false,curveSegments:4});
+ gF.rotateX(-Math.PI/2);gW.rotateX(-Math.PI/2);gW.translate(0,FLOOR,0);
+ const mat=new THREE.MeshStandardMaterial({color:0x7d8796,metalness:.45,roughness:.38,emissive:0x07090d}),fmat=new THREE.MeshStandardMaterial({color:0x2a3240,metalness:.2,roughness:.6}),lm=new THREE.LineBasicMaterial({color:0x9fe9ff,transparent:true,opacity:.55});
+ gF.computeVertexNormals();gW.computeVertexNormals();valveModel.add(new THREE.Mesh(gF,fmat));valveModel.add(new THREE.Mesh(gW,mat));
+ // 外框與流道邊緣描線（直接用輪廓）
+ const ol=(pts,h)=>{const g=new THREE.BufferGeometry().setFromPoints(pts.map(p=>new THREE.Vector3(p.x,h,-p.y)));valveModel.add(new THREE.LineLoop(g,lm))};
+ const bp=body.getPoints(4);ol(bp,TOP+.002);ol(bp,0);loops.forEach(l=>ol(l,TOP+.002));
+ const ring=new THREE.Mesh(new THREE.RingGeometry(8.2,8.4,96),new THREE.MeshBasicMaterial({color:0x2de2ff,transparent:true,opacity:.55,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.y=-.05;valveModel.add(ring)}
+// 流道內的示蹤粒子：位置由 STL 截面上的二維格子波茲曼流場推動（紅色＝反向、藍色＝正向）；只畫在實體模型範圍內
+const HN=1700,HX0=BX0,HX1=Math.min(BX1,305);// 模擬範本在 x ≥ 306 格已拿掉最右端特殊節（第七版），封面模型保留原樣，粒子只畫到這裡
+let heroSide=0;
+const hp=[0,1].map(i=>{const pos=new Float32Array(HN*3),col=new Float32Array(HN*3),px=new Float32Array(HN),py=new Float32Array(HN),pz=new Float32Array(HN);
+ for(let j=0;j<HN;j++){px[j]=Math.random()*400;py[j]=Math.random()*64;pz[j]=(17+Math.random()*30)*KW;col[j*3]=i?.3:1;col[j*3+1]=i?.62:.3;col[j*3+2]=i?1:.28}// 第十版：封面第 0 組（左→右）＝反向紅、第 1 組（右→左）＝正向藍
+ const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pos,3));pg.setAttribute('color',new THREE.BufferAttribute(col,3));
+ const pts=new THREE.Points(pg,new THREE.PointsMaterial({size:.14,map:dotTex,vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));pts.frustumCulled=false;valveModel.add(pts);return{pg,pts,px,py,pz}});
+function heroP(){hp.forEach((h,i)=>{h.pts.visible=i===heroSide;if(i!==heroSide)return;const s=sims[i],p=h.pg.attributes.position.array,NX=400,NY=64;
+ for(let j=0;j<HN;j++){let x=h.px[j],y=h.py[j];const k=(y|0)*NX+(x|0);
+  if(x>=NX-2||x<0||y<1||y>=NY-1||s.solid[k]||Math.random()<.0008){x=Math.random()*4;y=STL_CY-4+Math.random()*9}else{x+=s.ux[k]*6;y+=s.uy[k]*6}
+  h.px[j]=x;h.py[j]=y;const xp=i?NX-1-x:x,inM=xp>=HX0&&xp<=HX1;p[j*3]=((xp+.5)*.75-150)*KW;p[j*3+1]=inM?h.pz[j]:-99;p[j*3+2]=-((y+.5)*.75-24)*KW}
+ h.pg.attributes.position.needsUpdate=true})}
+const K=[{d:17,th:.25,ph:1.0,tx:0,ty:2.8},{d:16,th:.25,ph:.68,tx:-3.4,ty:0},{d:16,th:.25,ph:.68,tx:-3.4,ty:0},{d:18,th:.25,ph:1.0,tx:0,ty:-3.6}];// 第十八版：正向／反向段落再俯視一點（ph .85→.68）// 第十七版：正向／反向段落鏡頭拉遠一點，轉向後整支閥都在畫面右側
+const sstep=t=>t*t*(3-2*t),mixf=(a,b,t)=>a+(b-a)*t;
+function homeCam(){const el=$('#home'),sc=el.scrollTop/Math.max(1,el.clientHeight),i=Math.min(K.length-2,Math.max(0,Math.floor(sc))),f=sstep(Math.min(1,Math.max(0,sc-i))),a=K[i],b=K[i+1];
+ // 封面先介紹正向（第 1 組，右→左，藍），再介紹反向（第 0 組，左→右，紅）
+ heroSide=sc>=1.5?0:1;for(const p of['d','th','ph','tx','ty'])goal[p]=mixf(a[p],b[p],f);if(!S.rm){goal.th+=mouse[0]*.12;goal.ph+=mouse[1]*.06}}
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{root:$('#home'),threshold:.25});document.querySelectorAll('.rv').forEach(e=>io.observe(e));
+addEventListener('pointermove',e=>{mouse=[e.clientX/innerWidth-.5,e.clientY/innerHeight-.5]});
+
+// ===== 結論：粒子動畫 =====
+// 粒子先沿著特斯拉閥範本的流道流動（用第一關的流場），再聚成「FLOW LAB」字樣，最後散成星點。
+const EN=2600,endG=new THREE.BufferGeometry(),endPos=new Float32Array(EN*3),endCol=new Float32Array(EN*3);endG.setAttribute('position',new THREE.BufferAttribute(endPos,3));endG.setAttribute('color',new THREE.BufferAttribute(endCol,3));
+const endPts=new THREE.Points(endG,new THREE.PointsMaterial({size:.13,map:dotTex,vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));endPts.frustumCulled=false;endPts.visible=false;scene.add(endPts);
+// 「FLOW LAB」字樣的目標點：依實際字寬決定畫布大小（舊版畫布太窄，字被切掉）；點數多於粒子數時平均抽樣，讓每個點都有粒子
+const endT=(()=>{const c=document.createElement('canvas'),x=c.getContext('2d'),F='900 92px sans-serif';x.font=F;const w=Math.ceil(x.measureText('FLOW LAB').width)+24;c.width=w;c.height=120;
+ x.font=F;x.fillStyle='#fff';x.textBaseline='middle';x.fillText('FLOW LAB',12,62);const d=x.getImageData(0,0,w,120).data;let pts=[];
+ for(let y=0;y<120;y+=2)for(let X=0;X<w;X+=2)if(d[(y*w+X)*4+3]>128)pts.push([(X-w/2)*.0125,(60-y)*.0125]);
+ if(pts.length>EN){const k=pts.length/EN;pts=Array.from({length:EN},(_,i)=>pts[Math.floor(i*k)])}return pts})();
+let endS=null,endSim=null;
+function showEnd(){mode='end';setView();
+$('#home').classList.add('hid');$('#lab').classList.add('hid');$('#build').classList.add('hid');$('#end').classList.remove('hid');chips.forEach(c=>{c.m.visible=c.lid.visible=c.sp.visible=false});
+ const r=[];if(G.l1.size)r.push('第一關比較了 '+G.l1.size+' 種雷諾數');if(G.l2.length)r.push('第二關記錄了 '+G.l2.length+' 種渦流狀態');{const pr=l3pair();if(pr)r.push('第三關在 Re '+pr.Re+' 看到反向 M = '+pr.b.Mt.toFixed(2)+'、正向 M = '+pr.f.Mt.toFixed(2))}if(G.l4.tests.length)r.push('第四關測試了 '+G.l4.tests.length+' 個設計');
+ $('#endSum').textContent=r.length?'你的探究紀錄：'+r.join('；')+'。（以上皆為二維模擬輸出）':'';
+ if(!endSim){endSim=new Sim(400,64);endSim.geom({stl:1},false);const f=flowFor(60,endSim.W);endSim.U=f.U;endSim.tau=f.tau;endSim.init();for(let i=0;i<1500;i++)endSim.step()}
+ playEnd();Object.assign(goal,{d:16,th:0,ph:Math.PI/2,tx:0,ty:0})}
+function playEnd(){endS={t0:performance.now(),t:0,x:new Float32Array(EN),y:new Float32Array(EN),tg:endT.map(()=>0)};for(let j=0;j<EN;j++){let x,y,k=0;do{x=Math.random()*396;y=1+Math.random()*62;k++}while(endSim.solid[Math.round(y)*400+Math.round(x)]&&k<50);endS.x[j]=x;endS.y[j]=y}endPts.visible=true}
+function hideEnd(){$('#end').classList.add('hid');endPts.visible=false;endS=null}
+// 畫面右半部：粒子沿範本流道流動（0–3 秒）→ 聚成「FLOW LAB」（3–6 秒）→ 停留閃爍 → 散開（8.5 秒後）→ 14 秒後重播
+function endFrame(dt){if(!endS)return;endS.t=(performance.now()-endS.t0)/1000;const t=endS.t,o=[0,0],adv=Math.min(80,Math.max(10,dt*1500)),X0=innerWidth<900?-4.6:.6,SC2=innerWidth<900?.023:.024,CX=X0+4.8;for(let k=0;k<10;k++)endSim.step();
+ for(let j=0;j<EN;j++){let x=endS.x[j],y=endS.y[j];endSim.vel(Math.min(398,x),Math.min(62,Math.max(1,y)),o);x+=o[0]*adv;y+=o[1]*adv;if(x>=398||endSim.solid[Math.round(y)*400+Math.round(x)]){x=Math.random()*20;y=endSim.cy-4+Math.random()*8}endS.x[j]=x;endS.y[j]=y;
+  const fx=X0+x*SC2,fy=(y-32)*SC2-1.6,tg=endT[j%endT.length],ph=Math.min(1,Math.max(0,(t-3-(j%97)/97*.8)/2.2)),e=ph*ph*(3-2*ph),out=Math.max(0,t-8.5);
+  const tx=tg[0]+CX+Math.sin(t*2+j)*.02*e,ty=tg[1]+1.4;endPos[j*3]=fx+(tx-fx)*e+Math.cos(j)*out*.6;endPos[j*3+1]=fy+(ty-fy)*e+Math.sin(j*1.7)*out*.6;endPos[j*3+2]=.3+e*.4;
+  const c=j%3===0?OR:CY,tw=.6+.4*Math.sin(t*5+j);endCol[j*3]=c[0]*tw;endCol[j*3+1]=c[1]*tw;endCol[j*3+2]=c[2]*tw}
+ endG.attributes.position.needsUpdate=true;endG.attributes.color.needsUpdate=true;if(t>14)playEnd()}
+$('#endPlay').onclick=playEnd;$('#endBack').onclick=()=>{hideEnd();start();pick(4)};$('#endHome').onclick=()=>{hideEnd();home()};
+
+// ===== 導覽 =====
+const LV=[[1,'I 水流大對決','正向和反向，哪邊比較難推？','Diodicity・雷諾數'],[2,'II 渦流現形記','慢推與快推，渦流在哪裡出現？','Reynolds number・渦度'],[3,'III 驗血晶片的混色魔術','直管、正向、反向，誰混得最均勻？','層流・被動式混合'],[4,'IV 設計你的特斯拉閥','用 20°–60° 模組組出你的設計','幾何設計・假說驗證']];
+LV.forEach(([i,n,p,t])=>{const b=document.createElement('button');b.className='card gl';b.dataset.i=i;b.innerHTML='<span class="t">'+t+'</span><b><span class="lk"></span>關卡 '+n+'</b><p>'+p+'</p>';b.onclick=()=>go(i);$('#cards').appendChild(b)});
+function start(){mode='lab';$('#home').classList.add('hid');$('#lab').classList.remove('hid');setView();Object.assign(goal,VS);if(window.FL_M)Object.assign(goal,{ph:1.42,th:0})}// 手機版：接近俯視，直式畫面裡閥比較大
+function home(){mode='home';setView();$('#lab').classList.add('hid');$('#build').classList.add('hid');hideEnd();S.lv=0;homeSims();$('#home').classList.remove('hid');$('#home').scrollTop=0}
+// 封面：第 0 組由左往右（反向，紅）、第 1 組由右往左（正向，藍）；用原始截面（不拉直）
+function homeSims(){clearScene();sims=[false,true].map(m=>{const s=new Sim(400,64);s.geom({stl:1},m);return s});const f=flowFor(100,sims[0].W);sims.forEach(s=>{s.U=f.U;s.tau=f.tau;s.Re=f.Re;s.init()});attach()}
+$('#go').onclick=()=>go(1);$('#logo').onclick=home;
+$('#expo').onclick=e=>{document.body.classList.toggle('expo');e.target.classList.toggle('on')};
+$('#fs').onclick=()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen().catch(()=>toast('此瀏覽器不允許全螢幕'))};
+function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',3600)}
+function rs(){renderer.setPixelRatio(S.low?1:Math.min(devicePixelRatio,1.75));cvs._h=0;setView();if(mode==='lab'&&chips.length)Object.assign(goal,{d:fitD(S.lv)})}
+// 關卡中：投影中心移到左右面板之間的區域中央；封面與結論用整個畫面
+// 第十八版：手機版關卡中，畫布只佔上方（捲動區以上），投影不用放大虛擬畫面，閥才不會太小
+function setView(){const W=innerWidth,H=window.FL_M&&mode==='lab'&&$('#mscroll')?Math.round($('#mscroll').getBoundingClientRect().top):innerHeight;if(cvs._h!==H||cvs._w!==W){cvs.style.height=H+'px';renderer.setSize(W,H,false);cvs._h=H;cvs._w=W}if(mode==='lab'){const v=viewRect(),cx=(v.x0+v.x1)/2,cy=(v.y0+v.y1)/2,fw=2*Math.max(cx,W-cx),fh=2*Math.max(cy,H-cy);
+  VF={v,fh};camera.aspect=fw/fh;camera.setViewOffset(fw,fh,fw/2-cx,fh/2-cy,W,H)}else{VF=null;camera.clearViewOffset();camera.aspect=W/H}camera.updateProjectionMatrix()}
+addEventListener('resize',rs);
+
+// ===== 第十五版：模型限制說明＋高雷諾數示意動畫（非模擬） =====
+// 依使用者要求：模擬數據不改；另外以「明確標示為示意」的動畫，呈現實驗研究描述的高 Re 反向不穩定流動（Nguyen, Abouezzi & Ristroph 2021, Nature Communications：特斯拉閥的單向性在 Re ≈ 200 才突然出現，並伴隨流動不穩定，類似提早轉為紊流）。
+const ILLBTN='<button class="sm" data-a="ill" style="margin-top:6px">▶ 看高雷諾數的反向示意動畫（非模擬）</button>';
+const LIMBOX=t=>'<div style="font-size:12.5px;line-height:1.6;color:var(--mu)">'+t+'<br>'+ILLBTN+'</div>';
+const LIM2=LIMBOX('反向時，每個支流和主流交會的地方都有一個渦流（白圈）；正向多出來的，是主流經過迴圈開口時捲出的渦流，以及迴圈裡幾乎不流動的死水渦。渦流多不代表阻力大：本模型反向仍需要較大的壓力差（Re 100 時 D ≈ 1.14）。<br>本站是二維層流模擬（Re 最高約 130）。實驗研究發現，真實特斯拉閥要到 Re 約 200 以上，反向流動變得不穩定、接近紊流，單向性才突然變明顯——這是二維模擬做不出來的。');
+const LIM3=LIMBOX('在二維、Re ≤ 100 的層流裡，兩股水大多並排前進，只能靠分子擴散慢慢混；我們用兩種方法（從出口反向追蹤、從入口放粒子）驗算，結果一致：反向和直管差不多。可能的原因是水繞進迴圈後又回到主通道的同一側，藍、黃兩層沒有被交換。真實晶片在較高 Re 時，反向交會處的流動會變得不穩定，三維渦旋把兩色攪混，這部分二維模擬做不出來。');
+const ILL={on:false};
+function openIll(){let ov=$('#ill');if(!ov){ov=document.createElement('div');ov.id='ill';ov.style.cssText='position:fixed;inset:0;z-index:50;background:rgba(2,6,14,.82);display:flex;align-items:center;justify-content:center';
+  ov.innerHTML='<div style="background:#0b1524;border:1px solid #2a4060;border-radius:14px;padding:14px 16px;max-width:min(1000px,96vw);width:100%"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><b style="font-size:17px;color:#ffd36b">示意動畫（不是模擬結果）：高雷諾數時的特斯拉閥</b><button class="sm" id="illX">✕ 關閉</button></div>'+
+  '<canvas id="illC" width="960" height="400" style="width:100%;height:auto;display:block;margin:8px 0;background:#060c16;border-radius:8px"></canvas>'+
+  '<div id="illT" style="font-size:13px;line-height:1.6;color:#aac">流道形狀與第一～三關相同；粒子的基本流向取自本站 Re 100 的模擬流場，反向交會處的不穩定渦旋與顏色混合是依實驗研究的描述加上去的<b>示意</b>，數量、強弱與混合程度都不代表量測或模擬結果。實驗研究（Nguyen, Abouezzi & Ristroph, 2021, <i>Nature Communications</i>）發現：特斯拉閥的單向性在 Re 約 200 才突然出現，並伴隨流動不穩定，類似提早轉為紊流。</div></div>';
+  document.body.appendChild(ov);$('#illX').onclick=()=>{ov.style.display='none';ILL.on=false}}
+ ov.style.display='flex';ILL.on=true;if(!ILL.s){illPrep();return}illRun()}
+function illPrep(){const ss=[true,false].map(m=>{const s=new Sim(400,64);s.geom(REFP,m);const f=flowFor(100,s.W);s.U=f.U;s.tau=f.tau;s.init();return s}),cv=$('#illC'),x=cv.getContext('2d');
+ const tick=()=>{if(!ILL.on)return;for(let k=0;k<150;k++)ss.forEach(s=>{s.step();if(s.ns%200===0&&s.ns<=30000)s.boost()});const done=ss.every(s=>s.settled())||ss[0].ns>12000;
+  x.fillStyle='#060c16';x.fillRect(0,0,960,400);x.fillStyle='#cde';x.font='18px sans-serif';x.fillText('準備流場中… '+Math.min(99,Math.round(ss[0].ns/60))+'%',380,200);
+  if(done){ILL.s=ss;illRun()}else requestAnimationFrame(tick)};tick()}
+function illRun(){const cv=$('#illC'),x=cv.getContext('2d'),ss=ILL.s,K=2.4,Y0=[34,236],N=1500,o=[0,0];
+ const bg=ss.map(s=>{const c=document.createElement('canvas');c.width=400;c.height=64;const g=c.getContext('2d'),im=g.createImageData(400,64);for(let y=0;y<64;y++)for(let X=0;X<400;X++){const k=y*400+X,j=((63-y)*400+X)*4,f=!s.solid[k];im.data[j]=f?38:14;im.data[j+1]=f?46:20;im.data[j+2]=f?60:30;im.data[j+3]=255}g.putImageData(im,0,0);return c});
+ const P=ss.map(s=>{const p={x:new Float32Array(N),y:new Float32Array(N),c:new Float32Array(N),st:new Uint16Array(N)};for(let j=0;j<N;j++)spawn(s,p,j,true);return p});
+ function spawn(s,p,j,any){for(let t=0;t<50;t++){const X=any?2+Math.random()*396:1+Math.random()*3,Y=s.cy+(Math.random()-.5)*s.W*.9,k=Math.round(Y)*400+Math.round(X);if(!s.solid[k]){p.x[j]=X;p.y[j]=Y;p.c[j]=Y>s.cy?1:0;return}}p.x[j]=2;p.y[j]=s.cy;p.c[j]=Math.random()<.5?1:0}
+ // 反向的示意渦旋：放在每個迴圈回流與主流交會處（M），強度隨時間起伏、旋向交替
+ const VX=ss[1].loops.map((L,i)=>({x:L.M[0]+2,y:L.M[1],ph:Math.random()*6.28,sg:i%2?1:-1,w:.55+Math.random()*.3}));
+ const t0=performance.now();
+ function frame(){if(!ILL.on)return;const t=(performance.now()-t0)/1000;x.fillStyle='#060c16';x.fillRect(0,0,960,400);
+  x.font='bold 16px sans-serif';x.fillStyle='#9fd0ff';x.fillText('正向（水由右往左）：沿主通道平順流過，兩色大致並排',8,22);x.fillStyle='#ff9a9a';x.fillText('反向（水由左往右）：交會處的水流不穩定、捲成渦旋，兩色被攪混（示意）',8,224);
+  ss.forEach((s,r)=>{const p=P[r],U=s.U,rev=r===1;x.save();x.imageSmoothingEnabled=true;if(!rev){x.translate(960,0);x.scale(-1,1)}x.drawImage(bg[r],0,Y0[r],960,64*K);
+   for(let j=0;j<N;j++){let X=p.x[j],Y=p.y[j];s.vel(Math.min(398.9,Math.max(0,X)),Math.min(62.9,Math.max(0,Y)),o);let u=o[0],v=o[1],turb=0;
+    if(rev)for(const q of VX){const dx=X-q.x,dy=Y-q.y,r2=dx*dx+dy*dy,rc=3.2;if(r2>120)continue;const a=q.sg*q.w*U*(.65+.35*Math.sin(2.3*t+q.ph))*Math.exp(.5*(1-r2/(rc*rc)))/rc;u+=-dy*a;v+=dx*a;turb=Math.max(turb,Math.exp(-r2/60))}
+    const dt=9;let nx=X+u*dt+(rev?turb*.5*(Math.random()-.5):0),ny=Y+v*dt+(rev?turb*.5*(Math.random()-.5):0);
+    if(s.solid[Math.round(ny)*400+Math.round(nx)]){nx=X+u*dt*.3;ny=Y+v*dt*.3;if(s.solid[Math.round(ny)*400+Math.round(nx)]){nx=X;ny=Y}}
+    if(rev&&turb>.15)p.c[j]+=(.5-p.c[j])*.04*turb;// 示意：在不穩定渦旋區停留越久，顏色越接近混合色
+    p.st[j]=Math.hypot(nx-X,ny-Y)<.02?p.st[j]+1:0;p.x[j]=nx;p.y[j]=ny;if(nx>397||nx<0||ny<1||ny>62||p.st[j]>90){p.st[j]=0;spawn(s,p,j,false)}
+    const c=p.c[j],col=c<.5?mix3(YE,[.3,.95,.4],c*2):mix3([.3,.95,.4],BL,(c-.5)*2);x.fillStyle='rgb('+(col[0]*255|0)+','+(col[1]*255|0)+','+(col[2]*255|0)+')';x.fillRect(p.x[j]*K-1,Y0[r]+(63-p.y[j])*K-1,2.4,2.4)}
+   x.restore()});
+  requestAnimationFrame(frame)}
+ frame()}
+$('#right').addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;if(b.dataset.a==='ill')openIll()});
+
+// ===== 主迴圈 =====
+// 每一步都做 LBM 更新；每 200 步呼叫一次收斂加速器（前 30000 步）；第二關的染料每步更新一次（模擬速度只改變播放快慢）。
+function advance(n){const lv=S.lv,dye=lv===2;for(let t=0;t<n;t++)for(const s of sims){s.step();if(s.ns%200===0&&s.ns<=30000)s.boost();if(dye)s.dye(1,S.Dif)}}
+let last=performance.now(),fc=0;
+function frame(now){requestAnimationFrame(frame);const dt=Math.max(0,Math.min(.05,(now-last)/1000));last=now;fc++;
+ const run=mode==='home'||(mode==='lab'&&!S.paused&&!(S.lv===4&&!G.l4.testing&&!(G.l4.tail>now))&&!(S.lv===3&&G.mixJob));
+ runState(run);
+ if(run){const n=mode==='home'?2:S.steps;if(!useW())advance(n);
+  if(mode==='lab'&&!sims.every(s=>isFinite(s.dp))){if(S.lv===4){G.l4.testing=false;segUI();build(4);readout();toast('這個組合的計算發散了（數值不穩定），請換個組合再試');return}S.Re=Math.max(5,Math.round(S.Re*.8/5)*5);$('#re').value=S.Re;setFlow();build(S.lv);toast('數值不穩定（發散），已重設並把 Re 降到 '+S.Re);return}
+  if(mode==='lab')tracers.forEach(t=>t.update(n))}
+ else if(mode==='lab'&&S.lv===3&&G.mixJob&&!S.paused)tracers.forEach(t=>t.update(S.steps));
+ cacheSettled();prewarm();// 計算出口混合時流場已穩定，粒子照樣在（固定的）流場中流動
+ if(fc%30===0&&mode==='lab')setView();
+ // 關卡中用中性白光（避免藍、紫色點光把灰色流道染成藍色）；封面維持霓虹色光
+ {const lab=mode==='lab';amb.color.setHex(lab?0xffffff:0x8aa0c8);amb.intensity=lab?1.1:.9;l1.intensity=l2.intensity=lab?.25:1.4}
+ const hm=mode==='home';valveModel.visible=hm;chips.forEach(c=>{c.m.visible=c.lid.visible=c.sp.visible=mode==='lab'});
+ if(hm){coverRot(dt);heroP();homeCam()}
+ else if(mode==='lab'){autoPause(now);tracers.forEach((t,i)=>{if(t.cv)t.mixColor();t.draw(S.lv===3?(c=>c?BL:YE):(()=>i?REV:FWD))});chips.forEach((c,i)=>paint(i));{const rr=resultReady()||(S.lv===4&&G.l4.testing&&settledAll());if(fc%8===0||rr!==G.rr)readout();G.rr=rr}if(S.lv===3)mixStep()}
+ else if(mode==='end')endFrame(dt);
+ const k=1-Math.pow(.003,dt);for(const p of['th','ph','d','tx','ty'])cam[p]+=(goal[p]-cam[p])*k;
+ camera.position.set(cam.tx+cam.d*Math.sin(cam.ph)*Math.sin(cam.th),cam.ty+cam.d*Math.cos(cam.ph),cam.d*Math.sin(cam.ph)*Math.cos(cam.th));camera.lookAt(cam.tx,cam.ty,0);
+ renderer.render(scene,camera)}
+homeSims();tabsUI();rs();$('#vS').textContent=S.steps;styleUI();requestAnimationFrame(frame);
+
+// ===== 第十七版：封面轉向——捲到「正向」時停止旋轉，把正向的入水端（模型 +x 端，右端）轉向觀眾；捲到「反向」時把反向入水端（−x 端）轉向觀眾；標題與「親自動手」段落照常旋轉 =====
+function coverRot(dt){const el=$('#home'),sc=el.scrollTop/Math.max(1,el.clientHeight),r=valveModel.rotation;let tg=null;
+ const th=K[1].th,psc=Math.PI/2-th,TILT=1.1;// 攝影機水平方向角；入水端朝向攝影機、偏開約 70°（整支閥仍在畫面內），入水端都在畫面右側、不被左側文字擋住
+ if(sc>=.5&&sc<1.5)tg=-(psc-TILT);else if(sc>=1.5&&sc<2.5)tg=-(psc-TILT)+Math.PI;
+ if(tg==null){if(!S.rm)r.y+=dt*.4}else{let d=((tg-r.y)%(2*Math.PI)+3*Math.PI)%(2*Math.PI)-Math.PI;r.y+=d*Math.min(1,dt*2.5)}
+ // 繞模型自己的中心轉（模型中心不在原點，否則轉 180° 時整支閥會移位）
+ const cx=(CM_X0+CM_NX*CM_DX/2)*KW,cz=-(CM_Y0+CM_NY*CM_DX/2)*KW,c=Math.cos(r.y),sn=Math.sin(r.y);valveModel.position.x=cx-(cx*c+cz*sn);valveModel.position.z=cz-(-cx*sn+cz*c)}
+
+// ===== 第十八版：第四關分享設計結果＋排行榜（跨裝置）＋工作人員模式 =====
+// 排行榜資料來源（依序嘗試）：
+//  1) Google Apps Script（網頁由 Apps Script 網址開啟時，用 google.script.run 直接呼叫後端；兩台電腦與所有手機都寫進同一張 Google 試算表）
+//  2) 設定好的 Apps Script 網址（工作人員模式可設定，存在這台裝置；用 fetch 呼叫，供直接開啟 HTML 檔的電腦使用）
+//  3) claude.ai Artifact 的共用資料庫（只有登入且有權限的帳號能寫入，僅供預覽）
+// 密碼只用來擋一般觀眾（科學節展示用，不是資安防護）；刪除／清空時後端也會檢查密碼。
+const STAFF_PASS='Arrow0815',IS_M=!!window.FL_M;
+const LB={api:null,kind:'',rows:[],admin:false,last:null,ready:null,poll:0,unsub:null,db:null};
+const gas=(fn,...a)=>new Promise((ok,no)=>{google.script.run.withSuccessHandler(ok).withFailureHandler(no)[fn](...a)});
+function apiURL(){try{const q=new URLSearchParams(location.search).get('api');if(q)return q;return localStorage.getItem('flowlab_api')||''}catch(e){return''}}
+LB.ready=(async()=>{
+ if(window.google&&google.script&&google.script.run){LB.kind='gas';LB.api={list:()=>gas('listScores'),add:r=>gas('addScore',r),del:(id,p)=>gas('deleteScore',id,p),clear:p=>gas('clearScores',p),url:()=>gas('getUrl')};return}
+ const u=apiURL();if(u){const j=async(o)=>{const r=await fetch(u,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o)});const d=await r.json();if(d.error)throw new Error(d.error);return d.result};
+  LB.kind='url';LB.api={list:async()=>{const r=await fetch(u+(u.includes('?')?'&':'?')+'api=list');const d=await r.json();return d.result},add:r=>j({op:'add',rec:r}),del:(id,p)=>j({op:'del',id,pass:p}),clear:p=>j({op:'clear',pass:p}),url:async()=>u};return}
+ try{if(!(window.claude&&window.claude.use))return;const db=await window.claude.use('db');if(!db)return;LB.db=db;LB.kind='artifact';
+  LB.api={list:async()=>(await db.collection('scores').orderBy('best','desc').limit(500).get()).docs.map(d=>({...d.data(),id:d.id})),add:async r=>({id:(await db.collection('scores').add(r)).id}),del:(id)=>db.collection('scores').doc(id).delete(),clear:async()=>{for(const r of LB.rows)await db.collection('scores').doc(r.id).delete()},url:async()=>''}}catch(e){}})();
+const SRC_TXT={gas:'● 雲端排行榜（Google 試算表，所有裝置共用）',url:'● 雲端排行榜（Google 試算表，所有裝置共用）',artifact:'● claude.ai 預覽資料庫（只有登入的擁有者帳號能寫入）'};
+function shareCombos(){const seen=new Set(),out=[];for(const r of G.l4.tests){if(seen.has(r.key))continue;seen.add(r.key);out.push(r);if(out.length===2)break}return out}
+const pctTxt=D=>D>=1?'反向比正向多需要 '+((D-1)*100).toFixed(1)+'% 的壓力差':'正向比反向多需要 '+((1/D-1)*100).toFixed(1)+'% 的壓力差';
+function openShare(first){const c=shareCombos();if(c.length<2)return;G.shFirst=first;
+ $('#shCards').innerHTML=c.map((r,i)=>'<div><div class="note">組合 '+(i+1)+'</div><b>'+r.name+'</b><div class="note">'+r.n+' 節</div><div class="dv">D = '+r.D.toFixed(3)+'</div><div style="font-size:13px">'+pctTxt(r.D)+'</div></div>').join('');
+ ['#shStep2','#shStep3'].forEach(q=>$(q).classList.add('hid'));$('#shStep1').classList.remove('hid');$('#shErr').textContent='';$('#shNo').textContent=first?'不分享，直接看結論':'不分享';$('#shm').classList.add('on')}
+function closeShare(){$('#shm').classList.remove('on');if(G.shFirst){G.shFirst=false;const was=G.unlocked.has(5);unlock(5,'🎉 第四關完成！',G.l4Msg||'接下來看看結論吧！','看結論 →');if(!was){clearTimeout(G.nextT);if(mode==='lab')$('#next').classList.add('on')}}}
+$('#shareBtn').onclick=()=>openShare(false);
+$('#shYes').onclick=()=>{$('#shStep1').classList.add('hid');$('#shStep2').classList.remove('hid');const i=$('#shNick');i.value=G.nick||'';setTimeout(()=>i.focus(),50)};
+$('#shBack').onclick=()=>{$('#shStep2').classList.add('hid');$('#shStep1').classList.remove('hid')};
+$('#shNo').onclick=closeShare;$('#shGo').onclick=closeShare;$('#shLb').onclick=()=>{closeShare();$('#next').classList.remove('on');openBoard()};
+$('#shNick').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')$('#shSend').click()});
+$('#shSend').onclick=async()=>{const nick=$('#shNick').value.replace(/[\u0000-\u001f<>]/g,'').trim().slice(0,12);if(!nick){$('#shErr').textContent='請先輸入暱稱';return}
+ const c=shareCombos();if(c.length<2)return;const b=c[0].D>=c[1].D?c[0]:c[1],rec={nick,best:+b.D.toFixed(4),bestName:b.name,combos:c.map(r=>({name:r.name,n:r.n,D:+r.D.toFixed(4)})),ts:Date.now(),re:RE4,dev:IS_M?'手機':'電腦',v:2};
+ $('#shSend').disabled=true;$('#shErr').textContent='上傳中…';
+ try{await LB.ready;if(!LB.api)throw{code:'noapi'};const r=await LB.api.add(rec);LB.last=r&&r.id;
+  G.nick=nick;$('#shStep2').classList.add('hid');$('#shStep3').classList.remove('hid');$('#shDone').textContent='🎉 '+nick+'，已上傳到排行榜！你的最佳組合「'+b.name+'」D = '+b.D.toFixed(3)+'。';$('#shErr').textContent=''}
+ catch(e){$('#shErr').textContent=e&&e.code==='noapi'?'排行榜尚未連線（請工作人員確認網址）。':e&&e.code==='quota_exceeded'?'排行榜已滿，請通知工作人員。':'上傳失敗，請再試一次（或按「返回」）。'}
+ $('#shSend').disabled=false};
+// 排行榜畫面
+function lbRender(){const rows=[...LB.rows].sort((a,b)=>b.best-a.best||a.ts-b.ts),tb=$('#lbBody');tb.textContent='';$('#lbEmpty').classList.toggle('hid',rows.length>0);
+ $$('#board .adm').forEach(e=>e.classList.toggle('hid',!LB.admin));$('#lbAdm').classList.toggle('hid',!LB.admin);$('#lbAdmin').classList.toggle('on',LB.admin);$('#lbAdmin').textContent=LB.admin?'結束管理':'管理（需密碼）';
+ rows.forEach((r,i)=>{const tr=document.createElement('tr');if(i<3)tr.className='r'+(i+1);if(r.id===LB.last)tr.classList.add('new');
+  const other=(r.combos||[]).find(c=>c.name!==r.bestName)||(r.combos||[])[1]||null,td=(t,c)=>{const e=document.createElement('td');e.textContent=t;if(c)e.className=c;tr.appendChild(e);return e};
+  td(i<3?['🥇','🥈','🥉'][i]:String(i+1),'rk');td(String(r.nick||'').slice(0,12));td(String(r.bestName||''));td(Number(r.best).toFixed(3),'dv');td(other?other.name+'（D '+Number(other.D).toFixed(3)+'）':'—');
+  const d=new Date(r.ts||0);td(d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')+(r.dev?'・'+r.dev:''));
+  const ad=td('','adm'+(LB.admin?'':' hid'));if(LB.admin){const b=document.createElement('button');b.className='sm';b.textContent='刪除';b.onclick=()=>lbDel(r.id);ad.appendChild(b)}
+  tb.appendChild(tr)})}
+async function lbLoad(){if(!LB.api)return;try{LB.rows=await LB.api.list()||[];lbRender();$('#lbSrc').textContent=SRC_TXT[LB.kind]+'・'+new Date().toTimeString().slice(0,8)+' 更新'}catch(e){$('#lbSrc').textContent='讀取失敗，稍後自動重試'}}
+async function lbDel(id){try{await LB.api.del(id,STAFF_PASS);await lbLoad()}catch(e){toast('刪除失敗')}}
+async function openBoard(){$('#board').classList.remove('hid');await LB.ready;
+ if(!LB.api){$('#lbSrc').textContent='排行榜尚未連線（工作人員模式可設定雲端網址）';LB.rows=[];lbRender();return}
+ if(LB.kind==='artifact'){$('#lbSrc').textContent=SRC_TXT.artifact;if(!LB.unsub)LB.unsub=LB.db.collection('scores').orderBy('best','desc').limit(500).onSnapshot(q=>{LB.rows=q.docs.map(d=>({...d.data(),id:d.id}));lbRender()},()=>{LB.unsub=null});return}
+ await lbLoad();clearInterval(LB.poll);LB.poll=setInterval(()=>{if($('#board').classList.contains('hid')){clearInterval(LB.poll);return}lbLoad()},5000)}// 每 5 秒更新，其他裝置的分享會自動出現
+$('#lbBtn').onclick=openBoard;$('#lbHome').onclick=openBoard;$('#lbClose').onclick=()=>{$('#board').classList.add('hid');clearInterval(LB.poll)};
+$('#lbFs').onclick=()=>{try{const d=document;if(d.fullscreenElement)d.exitFullscreen();else d.documentElement.requestFullscreen().catch(()=>toast('這個視窗不允許全螢幕，請用瀏覽器的全螢幕（F11）'))}catch(e){}};
+$('#lbAdmin').onclick=()=>{if(LB.admin){LB.admin=false;lbRender();return}askPass('排行榜管理',()=>{LB.admin=true;lbRender()})};
+$('#lbClear').onclick=async()=>{const b=$('#lbClear');if(!b.dataset.arm){b.dataset.arm=1;b.textContent='再按一次確認清空';$('#lbClearC').textContent='（無法復原）';setTimeout(()=>{delete b.dataset.arm;b.textContent='清空全部紀錄';$('#lbClearC').textContent=''},4000);return}
+ delete b.dataset.arm;b.textContent='清空全部紀錄';$('#lbClearC').textContent='';try{await LB.api.clear(STAFF_PASS);await lbLoad()}catch(e){toast('清空失敗')}};
+if(/board|leaderboard/.test(location.hash))setTimeout(openBoard,300);
+// 密碼視窗（工作人員模式、排行榜管理共用）；工作人員模式開啟後不再重複詢問
+function askPass(title,ok){if(G.staff){ok();return}$('#pwT').textContent=title+'：請輸入工作人員密碼';$('#pwI').value='';$('#pwE').textContent='';G.pwOk=ok;$('#pwm').classList.add('on');setTimeout(()=>$('#pwI').focus(),50)}
+$('#pwGo').onclick=()=>{if($('#pwI').value===STAFF_PASS){$('#pwm').classList.remove('on');G.staff=true;document.body.classList.add('staff');const f=G.pwOk;G.pwOk=null;f&&f()}else{$('#pwE').textContent='密碼錯誤';$('#pwI').select()}};
+$('#pwNo').onclick=()=>{$('#pwm').classList.remove('on');G.pwOk=null};
+$('#pwI').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')$('#pwGo').click();if(e.key==='Escape')$('#pwNo').click()});
+// 工作人員模式
+$('#staffBtn').onclick=()=>askPass('工作人員模式',openStaff);
+async function openStaff(){$('#stm').classList.add('on');await LB.ready;$('#stSrc').textContent=LB.api?SRC_TXT[LB.kind]:'尚未連線（下方可設定 Apps Script 網址）';$('#stApi').value=apiURL();
+ let u='';try{u=LB.api?await LB.api.url():''}catch(e){}let m=localStorage.getItem('flowlab_murl')||'';if(!m&&u)m=u+(u.includes('?')?'&':'?')+'m=1';$('#stMurl').value=m;drawQR(m)}
+function drawQR(u){const box=$('#stQR');box.textContent='';$('#stQRu').textContent=u||'（尚未設定手機網址）';if(!u)return;const go=()=>{try{const q=qrcode(0,'M');q.addData(u);q.make();box.innerHTML=q.createSvgTag({cellSize:6,margin:2})}catch(e){box.textContent='QR code 產生失敗'}};
+ if(window.qrcode)go();else{const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js';sc.onload=go;sc.onerror=()=>box.textContent='QR code 程式庫載入失敗（需要網路）';document.head.appendChild(sc)}}
+$('#stMsave').onclick=()=>{const v=$('#stMurl').value.trim();try{localStorage.setItem('flowlab_murl',v)}catch(e){}drawQR(v)};
+$('#stApiSave').onclick=()=>{const v=$('#stApi').value.trim();try{v?localStorage.setItem('flowlab_api',v):localStorage.removeItem('flowlab_api')}catch(e){}toast('已儲存，重新整理網頁後生效');};
+$('#stUnlock').onclick=()=>{[1,2,3,4,5].forEach(i=>G.unlocked.add(i));tabsUI();toast('已解鎖全部關卡')};
+$('#stProp').onclick=()=>{$('#stm').classList.remove('on');$('#prop').classList.add('on')};
+$('#stLb').onclick=()=>{$('#stm').classList.remove('on');openBoard().then(()=>{LB.admin=true;lbRender()})};
+$('#stFs').onclick=()=>$('#fs').click();
+$('#stReset').onclick=()=>{try{location.reload()}catch(e){}};
+$('#stOff').onclick=()=>{G.staff=false;document.body.classList.remove('staff');LB.admin=false;$('#stm').classList.remove('on');toast('已離開工作人員模式')};
+
+// ===== 第十八版：手機版（直式）——上方是模擬畫面，下方捲動區放「現在要做」、成果、參數與可展開的說明；左上角 ☰ 開側邊欄 =====
+function mInit(){document.body.classList.add('m');const lab=$('#lab'),ms=document.createElement('div');ms.id='mscroll';lab.appendChild(ms);
+ const L=$('#left'),Rt=$('#right'),take=e=>e&&ms.appendChild(e);
+ const gb=document.createElement('button');gb.className='sm';gb.id='mGoal';gb.textContent='📌 看本關目標';gb.onclick=()=>showGoal(true);
+ const head=document.createElement('div');head.className='mhead';head.appendChild(gb);ms.appendChild(head);
+ take(L.querySelector('.nb.big2'));take(L.querySelector('.now'));
+ [...Rt.children].filter(e=>!e.matches('details')).forEach(take);// 成果重點
+ take($('#build'));take($('#bot'));
+ [...L.children].filter(e=>e.id!=='sT'&&!e.classList.contains('big1')).forEach(take);// 實驗參數與說明摺疊
+ [...Rt.children].forEach(take);// 更多數據、紀錄表、為什麼、模型說明
+ const t=$('#top'),mb=document.createElement('button');mb.id='mMenu';mb.className='mm';mb.setAttribute('aria-label','選單');mb.innerHTML='<span></span><span></span><span></span>';t.insertBefore(mb,t.firstChild);
+ const tt=document.createElement('span');tt.id='mTitle';t.insertBefore(tt,$('#tabs'));
+ mb.onclick=()=>drawer(true);$('#drawerBg').onclick=()=>drawer(false);
+ $('#dHome').onclick=()=>{drawer(false);home()};$('#dLb').onclick=()=>{drawer(false);openBoard()};$('#dGoal').onclick=()=>{drawer(false);showGoal(true)};
+ rs()}
+function drawer(on){if(on){const box=$('#dLv');box.textContent='';[1,2,3,4,5].forEach(i=>{const b=document.createElement('button');const l=!G.unlocked.has(i);b.className='dl'+(i===S.lv&&mode==='lab'?' on':'')+(l?' lock':'');b.textContent=(l?'🔒 ':'')+(i===5?'結論':LVN[i]);b.onclick=()=>{drawer(false);go(i)};box.appendChild(b)})}
+ $('#drawer').classList.toggle('on',on);$('#drawerBg').classList.toggle('on',on)}
+function showGoal(force){if(!IS_M||mode!=='lab'||!S.lv)return;if(!force&&G.goalLv===S.lv)return;G.goalLv=S.lv;$('#gmT').textContent='關卡 '+LVN[S.lv];$('#gmG').textContent=TXT[S.lv].g;const n=nowTask();$('#gmN').textContent=mTxt(n[1]);$('#goalM').classList.add('on')}
+$('#gmGo').onclick=()=>$('#goalM').classList.remove('on');
+if(IS_M){mInit();const _p=pick;pick=function(i){_p(i);$('#mTitle').textContent=LVN[i];$('#mscroll').scrollTop=0;setTimeout(()=>showGoal(false),60)}}
+</script></body></html>
